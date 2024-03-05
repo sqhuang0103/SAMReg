@@ -100,7 +100,6 @@ def get_pair_masks(sam, image1, image2, num_pair=0, mode='embedding'):
 
 def get_image(path):
     img = cv2.imread(path)
-    img = img.detach().numpy()
     img = (img - img.min()) / (img.max() - img.min())
     img = img * 255.
     return img
