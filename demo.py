@@ -101,7 +101,7 @@ def get_pair_masks(sam, image1, image2, num_pair=0, mode='embedding'):
 def get_image(path):
     img = cv2.imread(path)
     img = (img - img.min()) / (img.max() - img.min())
-    img = img * 255.
+    img = np.uint8(img * 255.)
     return img
 
 def get_label(path):
