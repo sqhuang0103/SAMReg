@@ -161,7 +161,7 @@ if __name__ == '__main__':
     print(len(fix_masks),len(mov_masks))
     visualization = Vis()
     visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
-    plt.show()
+
 
     if True:
     # if args.interpolate:
@@ -178,6 +178,8 @@ if __name__ == '__main__':
         wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
         metric.update(wraped_seg, fix_label)
         print('Dice: {:.4f}; TRE: {:.4f}'.format(metric.get_dice()[0], metric.get_tre()[0]))
+
+    # plt.show()
 
 
 
