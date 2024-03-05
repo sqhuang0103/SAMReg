@@ -125,10 +125,11 @@ def get_ddf(masks1, masks2, args):
     paired_rois = PairedRegions(masks_mov=masks_mov, masks_fix=masks_fix, device=args.device)
     ddf = paired_rois.get_dense_correspondence(transform_type='ddf', max_iter=int(1e2), lr=1e-3, w_ddf=1.0,
                                                verbose=True)
+    # TODO:max_iter=int(1e4)
     return ddf
 
 def warp(mask,ddf, args):
-    mask = torch.tensor(mask)
+    mask = torch.tensor(mask).unsqueeze(0)
     masks_warped = (warp_by_ddf(mask.to(dtype=torch.float32, device=args.device), ddf) * 255).to(
         torch.uint8)  # torch.Size([1, 200, 200])
     masks_warped = masks_warped.cpu().numpy()
