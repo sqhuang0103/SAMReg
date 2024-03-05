@@ -208,8 +208,11 @@ class Vis_cv2():
             image1_with_mask = self.overlay_mask_on_image(image1, mask1['segmentation'], random_color)
             image2_with_mask = self.overlay_mask_on_image(image2, mask2['segmentation'], random_color)
 
-            cv2.imshow(f'Image1 Mask {ind}', image1_with_mask)
-            cv2.imshow(f'Image2 Mask {ind}', image2_with_mask)
+            # Concatenate images horizontally
+            combined_images = np.hstack((image1_with_mask, image2_with_mask))
+
+            # Display combined images
+            cv2.imshow(f'Image Pair {ind}', combined_images)
             # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
@@ -217,9 +220,10 @@ class Vis_cv2():
         """
         Displays the moving image, moved image, and fixed image.
         """
-        cv2.imshow('Moving Image', moving.astype('uint8'))
-        cv2.imshow('Moved Image', moved.astype('uint8'))
-        cv2.imshow('Fixed Image', fixed.astype('uint8'))
+        # Concatenate images horizontally
+        combined_images = np.hstack((moving, moved, fixed))
+        # Display combined images
+        cv2.imshow(f'moving - moved - fixed image', combined_images.astype('uint8') * 255)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
