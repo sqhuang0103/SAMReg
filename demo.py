@@ -99,11 +99,13 @@ def get_pair_masks(sam, image1, image2, num_pair=0, mode='embedding'):
     return masks_1, masks_2
 
 def get_image(path):
-    img = cv2.imread(path,0)
+    img = cv2.imread(path)
     img = (img - img.min()) / (img.max() - img.min())
     img = img * 255.
     return img
 
+def get_label(path):
+    return cv2.imread(path,0)
 
 
 def get_ddf(masks1, masks2, args):
