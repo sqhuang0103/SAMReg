@@ -11,7 +11,7 @@ from dataset.datasets import load_data_volume
 from region_correspondence.paired_regions import PairedRegions
 from region_correspondence.utils import warp_by_ddf
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
-from utils import Metric, Vis
+from utils import Metric, Vis, Vis_cv2
 
 def _config():
     parser = argparse.ArgumentParser()
@@ -73,7 +73,7 @@ def _config():
     parser.add_argument("--multi_axis", action="store_true")
     parser.add_argument("--multi_mov", action="store_true")
 
-    # demo args
+    # demo.py args
     parser.add_argument("--fix_image", default='./example/cardiac_2d/image1.png', type=str)
     parser.add_argument("--mov_image", default='./example/cardiac_2d/image2.png', type=str)
     parser.add_argument("--fix_label", default='./example/cardiac_2d/label1.png', type=str)
@@ -159,7 +159,8 @@ if __name__ == '__main__':
     mov_image = get_image(args.mov_image)
     fix_masks, mov_masks = get_pair_masks(sam, fix_image, mov_image)
     # visualization = Vis()
-    # visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
+    visualization = Vis_cv2()
+    visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
 
 
     if True:
@@ -176,9 +177,12 @@ if __name__ == '__main__':
         ddf = get_ddf(fix_masks, mov_masks, args)
         wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
         metric.update(wraped_seg[0], fix_label)
+        visualization._show_interpolate_img(mov_label,wraped_seg[0],fix_label)
         print('Dice: {:.4f}; TRE: {:.4f}'.format(metric.get_dice()[0], metric.get_tre()[0]))
 
-    # plt.show()
+    plt.show()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 

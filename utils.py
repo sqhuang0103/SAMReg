@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import cv2
 import nibabel as nib
 from scipy.spatial.distance import cdist
 import matplotlib.colors as mcolors
@@ -89,6 +90,9 @@ class Vis():
         return colors
 
     def show_mask(self, mask, ax, random_color=False):
+        """
+        Overlays a mask onto an image using a specified color.
+        """
         if random_color:
             color = np.concatenate([np.random.random(3), np.array([0.4])], axis=0)
         else:
@@ -141,6 +145,9 @@ class Vis():
         # plt.show()
 
     def _show_cor_img(self, image1, image2, masks1, masks2):
+        """
+        Displays pairs of images and their masks.
+        """
         # colors = self.generate_distinct_colors(20)
         for ind in range(len(masks1)):
             plt.figure(ind)
@@ -158,6 +165,63 @@ class Vis():
             self.show_mask(masks2[ind]['segmentation'], plt.gca(), random_color=True)
             # self.save_mask(masks2[ind]['segmentation'], plt.gca(), color=colors[ind])
             plt.axis('off')
+
+    def _show_interpolate_img(self, moving, moved, fixed):
+        """
+        Displays the moving image, moved image, and fixed image.
+        """
+        plt.figure()
+        plt.subplot(1,3,1)
+        plt.imshow((moving.astype('uint8')*255))
+        plt.title('moving image')
+        plt.axis('off')
+
+        plt.subplot(1, 3, 2)
+        plt.imshow((moved.astype('uint8') * 255))
+        plt.title('moving image')
+        plt.axis('off')
+
+        plt.subplot(1, 3, 3)
+        plt.imshow((fixed.astype('uint8') * 255))
+        plt.title('moving image')
+        plt.axis('off')
+
+class Vis_cv2():
+    def overlay_mask_on_image(self, image, mask, color=None):
+        """
+        Overlays a mask onto an image using a specified color.
+        """
+        if color is None:
+            color = np.random.randint(0, 256, (3,), dtype=np.uint8)
+        image_copy = image.copy()
+        mask_indices = np.where(mask != 0)
+        image_copy[mask_indices[0], mask_indices[1], :] = color
+        return image_copy
+
+    def _show_cor_img(self, image1, image2, masks1, masks2):
+        """
+        Displays pairs of images and their masks.
+        """
+        for ind, (mask1, mask2) in enumerate(zip(masks1, masks2)):
+            random_color = np.random.randint(0, 256, (3,), dtype=np.uint8)
+
+            image1_with_mask = self.overlay_mask_on_image(image1, mask1['segmentation'], random_color)
+            image2_with_mask = self.overlay_mask_on_image(image2, mask2['segmentation'], random_color)
+
+            cv2.imshow(f'Image1 Mask {ind}', image1_with_mask)
+            cv2.imshow(f'Image2 Mask {ind}', image2_with_mask)
+            # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+    def _show_interpolate_img(self, moving, moved, fixed):
+        """
+        Displays the moving image, moved image, and fixed image.
+        """
+        cv2.imshow('Moving Image', moving.astype('uint8'))
+        cv2.imshow('Moved Image', moved.astype('uint8'))
+        cv2.imshow('Fixed Image', fixed.astype('uint8'))
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
 
 def write_nii_data(save_path,file_name,data):
