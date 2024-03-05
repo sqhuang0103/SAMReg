@@ -124,7 +124,7 @@ def get_ddf(masks1, masks2, args):
     masks_fix = list_to_tensor(masks1)
     paired_rois = PairedRegions(masks_mov=masks_mov, masks_fix=masks_fix, device=args.device)
     ddf = paired_rois.get_dense_correspondence(transform_type='ddf', max_iter=int(1e4), lr=1e-3, w_ddf=1.0,
-                                               verbose=False)
+                                               verbose=True)
     return ddf
 
 def warp(mask,ddf, args):
@@ -170,6 +170,8 @@ if __name__ == '__main__':
             case 'label_ROI':
                 fix_label = get_label(args.fix_label)
                 mov_label = get_label(args.mov_label)
+        import pdb
+        pdb.set_trace()
 
         ddf = get_ddf(fix_masks, mov_masks, args)
         wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
