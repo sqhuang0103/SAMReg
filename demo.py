@@ -78,6 +78,9 @@ def _config():
     parser.add_argument("--mov_image", default='./example/cardiac_2d/image2.png', type=str)
     parser.add_argument("--fix_label", default='./example/cardiac_2d/label1.png', type=str)
     parser.add_argument("--mov_label", default='./example/cardiac_2d/label2.png', type=str)
+    parser.add_argument("--interpolate", action="store_true")
+    parser.add_argument("--ROI_type", default='pseudo_ROI', type=str, choices=['pseudo_ROI', 'label_ROI'])
+
 
 
 
@@ -105,7 +108,8 @@ def get_image(path):
     return img
 
 def get_label(path):
-    return cv2.imread(path,0)
+    img = cv2.imread(path, 0)
+    return img.astype('bool')
 
 
 def get_ddf(masks1, masks2, args):
@@ -124,6 +128,7 @@ def get_ddf(masks1, masks2, args):
     return ddf
 
 def warp(mask,ddf, args):
+    print(type(mask))
     masks_warped = (warp_by_ddf(mask.to(dtype=torch.float32, device=args.device), ddf) * 255).to(
         torch.uint8)  # torch.Size([1, 200, 200])
     masks_warped = masks_warped.cpu().numpy()
@@ -153,6 +158,24 @@ if __name__ == '__main__':
     fix_image = get_image(args.fix_image)
     mov_image = get_image(args.mov_image)
     fix_masks, mov_masks = get_pair_masks(sam, fix_image, mov_image)
+    print(len(fix_masks),len(mov_masks))
+
+    if True:
+    # if args.interpolate:
+        match args.ROI_type:
+            case 'pseudo_ROI':
+                idx = np.random.randint(0, len(fix_masks))
+                mov_label = mov_masks[idx]['segmentation']
+                fix_label = fix_masks[idx]['segmentation']
+            case 'label_ROI':
+                fix_label = get_label(args.fix_label)
+                mov_label = get_label(args.mov_label)
+
+        ddf = get_ddf(fix_masks, mov_masks, args)
+        wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
+        metric.update(wraped_seg, fix_label)
+        print('Dice: {:.4f}; TRE: {:.4f}'.format(metric.get_dice()[0], metric.get_tre()[0]))
+
 
 
 
