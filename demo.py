@@ -123,7 +123,7 @@ def get_ddf(masks1, masks2, args):
     masks_mov = list_to_tensor(masks2)
     masks_fix = list_to_tensor(masks1)
     paired_rois = PairedRegions(masks_mov=masks_mov, masks_fix=masks_fix, device=args.device)
-    ddf = paired_rois.get_dense_correspondence(transform_type='ddf', max_iter=int(1e4), lr=1e-3, w_ddf=1.0,
+    ddf = paired_rois.get_dense_correspondence(transform_type='ddf', max_iter=int(1e2), lr=1e-3, w_ddf=1.0,
                                                verbose=True)
     return ddf
 
