@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
         ddf = get_ddf(fix_masks, mov_masks, args)
         wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
-        metric.update(wraped_seg, fix_label)
+        metric.update(wraped_seg[0], fix_label)
         print('Dice: {:.4f}; TRE: {:.4f}'.format(metric.get_dice()[0], metric.get_tre()[0]))
 
     # plt.show()
