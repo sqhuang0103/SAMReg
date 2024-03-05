@@ -180,7 +180,7 @@ if __name__ == '__main__':
         visualization._show_interpolate_img(mov_label,wraped_seg[0],fix_label)
         print('Dice: {:.4f}; TRE: {:.4f}'.format(metric.get_dice()[0], metric.get_tre()[0]))
 
-    plt.show()
+    # plt.show()
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
