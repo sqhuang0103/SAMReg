@@ -128,7 +128,7 @@ def get_ddf(masks1, masks2, args):
     return ddf
 
 def warp(mask,ddf, args):
-    print(type(mask))
+    mask = torch.tensor(mask)
     masks_warped = (warp_by_ddf(mask.to(dtype=torch.float32, device=args.device), ddf) * 255).to(
         torch.uint8)  # torch.Size([1, 200, 200])
     masks_warped = masks_warped.cpu().numpy()
@@ -170,8 +170,6 @@ if __name__ == '__main__':
             case 'label_ROI':
                 fix_label = get_label(args.fix_label)
                 mov_label = get_label(args.mov_label)
-        import pdb
-        pdb.set_trace()
 
         ddf = get_ddf(fix_masks, mov_masks, args)
         wraped_seg = warp(mov_label, ddf, args)  # (1,200,200)
