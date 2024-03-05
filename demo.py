@@ -158,9 +158,8 @@ if __name__ == '__main__':
     fix_image = get_image(args.fix_image)
     mov_image = get_image(args.mov_image)
     fix_masks, mov_masks = get_pair_masks(sam, fix_image, mov_image)
-    print(len(fix_masks),len(mov_masks))
-    visualization = Vis()
-    visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
+    # visualization = Vis()
+    # visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
 
 
     if True:
