@@ -2,6 +2,8 @@ import os
 import numpy as np
 import nibabel as nib
 from scipy.spatial.distance import cdist
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 class Metric():
     def __init__(self):
         self.reset()
@@ -69,6 +71,94 @@ class Metric():
         std_deviation = np.std(self.tre_list)
         return mean_tre, std_deviation
         # return self.tre_sum / self.count
+
+class Vis():
+    def __init__(self):
+        pass
+
+    def generate_distinct_colors(self,n):
+        """implementation to generate fistinct colors"""
+        colors = []
+        for i in range(n):
+            # using HSV space
+            hue = i / n
+            saturation = 0.9
+            value = 0.9
+            rgb_color = mcolors.hsv_to_rgb([hue, saturation, value])
+            colors.append(rgb_color)
+        return colors
+
+    def show_mask(self, mask, ax, random_color=False):
+        if random_color:
+            color = np.concatenate([np.random.random(3), np.array([0.4])], axis=0)
+        else:
+            color = np.array([30 / 255, 144 / 255, 255 / 255, 0.6])
+        h, w = mask.shape[-2:]
+        mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
+        ax.imshow(mask_image.astype('uint8'))
+
+    def save_mask(self, mask, ax, color):
+        h, w = mask.shape[-2:]
+        mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)
+        from matplotlib.colors import ListedColormap
+        cmap = ListedColormap(['none', color])
+        ax.imshow(mask, cmap=cmap, alpha=0.5, interpolation='none')
+
+    def show_points(self, coords, labels, ax, marker_size=375):
+        coords = np.array(coords)
+        labels = np.array(labels)
+        pos_points = coords[labels == 1]
+        neg_points = coords[labels == 0]
+        # print("neg_points: ",neg_points)
+        # ax.scatter([_r[0] for _r in pos_points], [_r[1] for _r in pos_points], color='green', marker='*', s=marker_size, edgecolor='white',
+        #            linewidth=1.25)
+        # ax.scatter([_r[0] for _r in neg_points], [_r[1] for _r in neg_points], color='red', marker='*', s=marker_size, edgecolor='white',
+        #            linewidth=1.25)
+        ax.scatter(pos_points[:, 1], pos_points[:, 0], color='green', marker='*', s=marker_size, edgecolor='white',
+                   linewidth=1.25)
+        ax.scatter(neg_points[:, 1], neg_points[:, 0], color='red', marker='*', s=marker_size, edgecolor='white',
+                   linewidth=1.25)
+
+    def show_box(self, box, ax):
+        x0, y0 = box[0], box[1]
+        w, h = box[2] - box[0], box[3] - box[1]
+        ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0, 0, 0, 0), lw=2))
+
+    def _show_img(self, image, masks, input_point=None, input_label=None, ind=1):
+        plt.figure(ind)
+        plt.imshow(image)
+        for mask in masks[:-1]:
+            # masks = MaskSelect(masks)
+            # for mask in masks:
+            # show_mask(mask.cpu().numpy(), plt.gca(), random_color=True)
+            # print(mask['segmentation'].shape,mask['segmentation'].sum(),mask['segmentation'].max())
+            self.show_mask(mask['segmentation'], plt.gca(), random_color=True)
+            # show_mask(mask, plt.gca(), random_color=True)
+        if input_point is not None:
+            for points, labels in zip(input_point, input_label):
+                self.show_points(points, labels, plt.gca())
+        plt.axis('off')
+        # plt.show()
+
+    def _show_cor_img(self, image1, image2, masks1, masks2):
+        # colors = self.generate_distinct_colors(20)
+        for ind in range(len(masks1)):
+            plt.figure(ind)
+            # color = np.random.rand(3,)
+
+            plt.subplot(1, 2, 1)
+            plt.imshow(image1.astype('uint8'))
+            self.show_mask(masks1[ind]['segmentation'], plt.gca(), random_color=True)
+            # self.save_mask(masks1[ind]['segmentation'], plt.gca(), color=colors[ind])
+            plt.axis('off')
+
+
+            plt.subplot(1, 2, 2)
+            plt.imshow(image2.astype('uint8'))
+            self.show_mask(masks2[ind]['segmentation'], plt.gca(), random_color=True)
+            # self.save_mask(masks2[ind]['segmentation'], plt.gca(), color=colors[ind])
+            plt.axis('off')
+
 
 def write_nii_data(save_path,file_name,data):
     # data: nd.array

@@ -6,12 +6,12 @@ import torch.nn.functional as F
 import argparse
 import matplotlib.pyplot as plt
 import nibabel as nib
-from model.pair2d import PairMasks, Vis, PairMode
+from model.pair2d import PairMasks, PairMode
 from dataset.datasets import load_data_volume
 from region_correspondence.paired_regions import PairedRegions
 from region_correspondence.utils import warp_by_ddf
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
-from utils import Metric
+from utils import Metric, Vis
 
 def _config():
     parser = argparse.ArgumentParser()
@@ -159,6 +159,9 @@ if __name__ == '__main__':
     mov_image = get_image(args.mov_image)
     fix_masks, mov_masks = get_pair_masks(sam, fix_image, mov_image)
     print(len(fix_masks),len(mov_masks))
+    visualization = Vis()
+    visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
+    plt.show()
 
     if True:
     # if args.interpolate:
