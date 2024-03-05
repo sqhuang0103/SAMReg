@@ -43,7 +43,7 @@ class PairMasks():
     def img_preprocess(self,im):
         if len(im.shape) == 2:
             im = np.stack((im, im, im), axis=-1)
-        im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+        # im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
         return im
 
     def _maskfuse(self, masks):
