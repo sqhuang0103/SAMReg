@@ -58,3 +58,7 @@ For traditional image warping, enable interpolation and specify the type of ROI:
 python demo.py --sam_checkpoint path/to/snapshot/ --interpolate --ROI_type pseudo_ROI 
 ```
 Choose between `label_ROI` or `pseudo_ROI` for the metric object based on your preference.
+
+### Acknowledgement
+
+### Citation
