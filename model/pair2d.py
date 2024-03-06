@@ -88,8 +88,6 @@ class PairMasks():
 
         embedding = predictor.get_image_embedding().cpu().numpy()
         masks, scores, logits = predictor.predict(point_coords=point_coords, point_labels=point_labels)
-        # scores (3,)
-        # logits (3,256,256) 将(h,w)的大小统一为(256,256),logits[np.argmax(scores),:,:]可以作为predict函数的输入input_mask
 
         return masks, scores, logits, embedding
 
@@ -166,7 +164,6 @@ class PairMasks():
         self.similarity_matrix = (sim_matrix-sim_matrix.min())/(sim_matrix.max()-sim_matrix.min())
         index_pairs = []
         for i in range(min(len(masks1), len(masks2))):
-            # 找到最大相似度的索引
             max_sim_idx = np.unravel_index(np.argmax(similarity_matrix, axis=None), similarity_matrix.shape)
             index_pairs.append(max_sim_idx)
             # pairs.append((masks2[max_sim_idx[0]], masks2[max_sim_idx[1]]))
@@ -467,10 +464,10 @@ def load_nii_data(path):
     import monai
     from monai.transforms import Compose, LoadImaged, Spacingd, ToTensord, Resized, AddChanneld
     transforms = Compose([
-        LoadImaged(keys=["image"]),  # 加载图像
-        AddChanneld(keys=["image"]),  # 增加通道维度
-        Resized(keys=["image"], spatial_size=(96, 200, 200)),  # 调整图像大小
-        ToTensord(keys=["image"])  # 将图像转换为张量
+        LoadImaged(keys=["image"]),
+        AddChanneld(keys=["image"]),
+        Resized(keys=["image"], spatial_size=(96, 200, 200)),
+        ToTensord(keys=["image"])
     ])
     dataset = monai.data.Dataset(data=[{"image": path}], transform=transforms)
     sample = dataset[0]
