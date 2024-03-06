@@ -462,8 +462,6 @@ class Vis():
             self.save_mask(masks2[ind]['segmentation'], plt.gca(), color=colors[ind])
             plt.axis('off')
 
-            plt.savefig('/raid/shiqi/{}.png'.format(ind))
-            plt.close()
 
 def load_nii_data(path):
     import monai
