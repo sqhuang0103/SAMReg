@@ -21,12 +21,12 @@ def _config():
     )
     parser.add_argument(
         "--save_path",
-        default="/raid/shiqi/RegProstate",
+        default="path/to/save/",
         type=str,
     )
     parser.add_argument(
         "--data_prefix",
-        default="/raid/shiqi/data/Data",
+        default="path/to/data_prefix/",
         type=str,
     )
     parser.add_argument(
@@ -36,7 +36,7 @@ def _config():
     )
     parser.add_argument(
         "--sam_checkpoint",
-        default="/raid/shiqi/sam_pretrained/sam_vit_h_4b8939.pth",
+        default="path/to/snapshot/",
         type=str,
     )
     parser.add_argument(
@@ -80,9 +80,6 @@ def _config():
     parser.add_argument("--mov_label", default='./example/cardiac_2d/label2.png', type=str)
     parser.add_argument("--interpolate", action="store_true")
     parser.add_argument("--ROI_type", default='pseudo_ROI', type=str, choices=['pseudo_ROI', 'label_ROI'])
-
-
-
 
     args = parser.parse_args()
     return args
@@ -163,8 +160,7 @@ if __name__ == '__main__':
     visualization._show_cor_img(fix_image,mov_image,fix_masks,mov_masks)
 
 
-    if True:
-    # if args.interpolate:
+    if args.interpolate:
         match args.ROI_type:
             case 'pseudo_ROI':
                 idx = np.random.randint(0, len(fix_masks))

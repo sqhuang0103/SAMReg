@@ -34,10 +34,9 @@ class Metric():
 
     def target_registration_error(self, mask1, mask2):
         """calculate TRE"""
-        # 计算每个掩模的前景中点
         centroid1 = np.mean(np.argwhere(mask1), axis=0)
         centroid2 = np.mean(np.argwhere(mask2), axis=0)
-        # 计算两个中点之间的欧氏距离
+
         tre = np.linalg.norm(centroid1 - centroid2)
         return tre
 
@@ -230,10 +229,8 @@ class Vis_cv2():
 
 def write_nii_data(save_path,file_name,data):
     # data: nd.array
-    # 将 NumPy 数组转换为 NIfTI 图像对象
     nifti_image = nib.Nifti1Image(data, np.eye(4))
 
-    # 保存为 nii.gz 文件
     save_path = os.path.join(save_path,file_name)
     nib.save(nifti_image, save_path)
     # print(f"Saved the NIfTI image to {save_path}")

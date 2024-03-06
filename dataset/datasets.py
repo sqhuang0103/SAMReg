@@ -86,7 +86,6 @@ class BrainVolumeDataset(BaseVolumeDataset):
         self.target_class = 2
 
 class CardiacVolumeDataset(BaseVolumeDataset):
-    # TODO: 写一个新的BasePairVolumeDataset
     def __init__(
         self,
         image_paths,

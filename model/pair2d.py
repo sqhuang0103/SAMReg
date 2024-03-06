@@ -14,8 +14,6 @@ from scipy.spatial.distance import cosine
 import torch
 import matplotlib.colors as mcolors
 
-# device = "cuda"
-# device = 'cpu'
 
 class PairMasks():
     def __init__(self, sam, im1, im2, mode = 'embedding'):
@@ -90,7 +88,6 @@ class PairMasks():
 
         embedding = predictor.get_image_embedding().cpu().numpy()
         masks, scores, logits = predictor.predict(point_coords=point_coords, point_labels=point_labels)
-        # masks (3,h,w) 可视化: masks[argmax(scores),:,:]
         # scores (3,)
         # logits (3,256,256) 将(h,w)的大小统一为(256,256),logits[np.argmax(scores),:,:]可以作为predict函数的输入input_mask
 
@@ -161,15 +158,12 @@ class PairMasks():
         return masks1_new, masks2_new
 
     def embedding_pair(self,masks1,masks2):
-        # 计算相似度矩阵
         similarity_matrix = np.zeros((len(masks1), len(masks2)))
         for i, vec_a in enumerate(masks1):
             for j, vec_b in enumerate(masks2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
         sim_matrix = similarity_matrix.copy()
         self.similarity_matrix = (sim_matrix-sim_matrix.min())/(sim_matrix.max()-sim_matrix.min())
-        # 寻找最大相似度的配对
-        # pairs = []
         index_pairs = []
         for i in range(min(len(masks1), len(masks2))):
             # 找到最大相似度的索引
@@ -177,7 +171,6 @@ class PairMasks():
             index_pairs.append(max_sim_idx)
             # pairs.append((masks2[max_sim_idx[0]], masks2[max_sim_idx[1]]))
 
-            # 将已配对的向量从后续考虑中排除
             similarity_matrix[max_sim_idx[0], :] = -1
             similarity_matrix[:, max_sim_idx[1]] = -1
         # now obtain pairs, index_pairs
@@ -336,27 +329,28 @@ class PairMode(PairMasks):
             print('mode1:20000')
 
     def get_top_half(self, matrix):
-        # 将 ndarray 转换为一维数组，并排序
         flattened_arr = matrix.flatten()
         sorted_arr = np.sort(flattened_arr)
 
-        # 获取最大的 n*n/2 个值
         top_half_max_values = sorted_arr[-(matrix.size // 2):]
 
         return top_half_max_values.sum()
 
 
     def embedding_pair(self,masks1,masks2,similarity_matrix):
-        # 寻找最大相似度的配对
+        '''
+        masks1: list of binary masks generated from image1
+        masks2: list of binary masks generated from image1
+        similarity_matrix: cosine similarity between each mask1 and each mask2
+        '''
         pairs = []
         index_pairs = []
         for i in range(min(len(masks1), len(masks2))):
-            # 找到最大相似度的索引
             max_sim_idx = np.unravel_index(np.argmax(similarity_matrix, axis=None), similarity_matrix.shape)
             index_pairs.append(max_sim_idx)
             pairs.append((masks2[max_sim_idx[0]], masks2[max_sim_idx[1]]))
 
-            # 将已配对的向量从后续考虑中排除
+            # elminate the paired idx
             similarity_matrix[max_sim_idx[0], :] = -1
             similarity_matrix[:, max_sim_idx[1]] = -1
         # now obtain pairs, index_pairs
@@ -369,10 +363,9 @@ class Vis():
         pass
 
     def generate_distinct_colors(self,n):
-        """生成n个区分度高的颜色列表"""
         colors = []
         for i in range(n):
-            # 在HSV空间中均匀分布色相，固定饱和度和亮度以保证颜色的鲜艳和明亮
+            # using HSV space
             hue = i / n
             saturation = 0.9
             value = 0.9
@@ -473,10 +466,6 @@ class Vis():
             plt.close()
 
 def load_nii_data(path):
-    # 定义要应用的转换
-    # LoadImaged 读取 nii.gz 文件
-    # AddChanneld 在图像上添加一个通道维度，这在训练神经网络时常常是必需的
-    # ToTensord 将图像转换为 PyTorch 张量
     import monai
     from monai.transforms import Compose, LoadImaged, Spacingd, ToTensord, Resized, AddChanneld
     transforms = Compose([
@@ -485,18 +474,11 @@ def load_nii_data(path):
         Resized(keys=["image"], spatial_size=(96, 200, 200)),  # 调整图像大小
         ToTensord(keys=["image"])  # 将图像转换为张量
     ])
-    # 应用转换
-    # 注意：MONAI 期望输入是一个包含图像文件名的字典
     dataset = monai.data.Dataset(data=[{"image": path}], transform=transforms)
     sample = dataset[0]
     image_tensor = sample["image"]
     image_tensor = image_tensor.detach().numpy()
     image_tensor = image_tensor[0]
-
-    # 输出张量信息
-    # print(tensor_image.shape)  # 查看张量的形状 # (96,200,200)
-    # print(tensor_image.min(),tensor_image.max())  # 查看张量的最值 #tensor(-1.4998) tensor(4.6097)
-    # print(tensor_image.dtype)  # 查看张量的数据类型 # torch.float32
 
     return image_tensor
 
@@ -506,7 +488,6 @@ def expand_3c(slice_2d):
     slice_2d = np.uint8(slice_2d)
     # print(slice_2d.shape)
 
-    # 将切片扩展为 3 通道，形状为 (200, 200,3)
     slice_3_channel = np.dstack((slice_2d, slice_2d, slice_2d))
     return slice_3_channel
 
@@ -519,53 +500,4 @@ def slice_pair(data1,data2,ind):
     slice2 = expand_3c(slice2)
 
     return slice1, slice2
-
-
-if __name__ == '__main__':
-    ################### Load 2D image pair ###################
-    path = r'/raid/shiqi/'
-
-    image1 = cv2.imread(os.path.join(path, 'slice_1_1.png'))
-    image2 = cv2.imread(os.path.join(path, 'slice_1_2.png'))
-    print(image2.shape)
-
-    ##################### Load 3D nii data and their slices #####################
-    # img_path_1 = r"/raid/shiqi/data/Data/t2w/Patient001061633_study_0.nii.gz"
-    # img_path_2 = r"/raid/shiqi/data/Data/t2w/Patient985916122_study_0.nii.gz"
-    #
-    # data_1 = load_nii_data(img_path_1)
-    # data_2 = load_nii_data(img_path_2)
-    # image1, image2 = slice_pair(data_1,data_2,ind=30)
-    # print(image1.shape)
-
-    ###################### Load Sam Model #################################
-    sam = sam_model_registry["vit_h"](checkpoint="/raid/shiqi/sam_pretrained/sam_vit_h_4b8939.pth")
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    sam.to(device=device)
-
-    ##################### PairMask #####################################
-    PairM = PairMasks(sam, image1, image2, mode ='embedding')
-    # masks1_cor = PairM.masks1_cor
-    # masks2_cor = PairM.masks2_cor
-    # import cv2
-    # save_dir = r'/raid/shiqi/pair_mask samples/Cytological/sample1'
-    # cv2.imwrite(save_dir+'/image_1.png',image1)
-    # cv2.imwrite(save_dir+'/image_2.png',image2)
-    # ind = 1
-    # for m1,m2 in zip(PairM.masks1_cor,PairM.masks2_cor):
-        # cv2.imwrite(save_dir+'/mask_1_{}.png'.format(str(ind)),np.uint8(m1['segmentation']))
-        # cv2.imwrite(save_dir+'/mask_2_{}.png'.format(str(ind)),np.uint8(m2['segmentation']))
-        # ind += 1
-
-
-    Visulize = Vis()
-    Visulize._show_cor_img(PairM.im1, PairM.im2, PairM.masks1_cor, PairM.masks2_cor)
-    plt.show()
-
-
-
-
-
-
-
 
