@@ -111,9 +111,7 @@ def get_label(path):
 
 def get_ddf(masks1, masks2, args):
     def list_to_tensor(items):
-        # 将列表中的每个NumPy数组转换为PyTorch张量
         tensors = [torch.tensor(item['segmentation'], dtype=torch.float) for item in items]
-        # 沿着新维度堆叠张量，得到形状为(C, H, W)的张量
         stacked_tensor = torch.stack(tensors, dim=0)
         return stacked_tensor
 
