@@ -19,3 +19,5 @@ masks = processor.image_processor.post_process_masks(
     outputs.pred_masks.cpu(), inputs["original_sizes"].cpu(), inputs["reshaped_input_sizes"].cpu()
 )
 scores = outputs.iou_scores
+import pdb
+pdb.set_trace()
