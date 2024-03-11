@@ -64,8 +64,8 @@ class RoiMatching():
         return outputs
 
 
-im1 = cv2.imread("/raid/shiqi/1B_B7_T.png")
-im2 = cv2.imread("/raid/shiqi/1B_B7_R.png")
+im1 = Image.open("/raid/shiqi/1B_B7_T.png")
+im2 = Image.open("/raid/shiqi/1B_B7_R.png")
 imgs = [im1,im2]
 RM = RoiMatching(imgs,imgs,device)
 import pdb
