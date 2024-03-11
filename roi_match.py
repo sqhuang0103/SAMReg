@@ -31,10 +31,9 @@ generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=0)
 from PIL import Image
 import requests
 
-img_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
+# img_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
 # raw_image = Image.open(requests.get(img_url, stream=True).raw).convert("RGB")
-new_image_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/depth-estimation-example.jpg"
-imgs = [img_url,new_image_url]
+# new_image_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/depth-estimation-example.jpg"
 # outputs = generator(raw_image, points_per_batch=64)
 # masks = outputs["masks"] #len 59, masks[0] (480,640), max True
 
@@ -64,6 +63,9 @@ class RoiMatching():
         return outputs
 
 
+im1 = cv2.imread("/raid/shiqi/1B_B7_T.png")
+im2 = cv2.imread("/raid/shiqi/1B_B7_R.png")
+imgs = [im1,im2]
 RM = RoiMatching(imgs,imgs,device)
 import pdb
 pdb.set_trace()
