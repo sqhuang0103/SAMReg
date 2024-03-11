@@ -52,11 +52,11 @@ class RoiMatching():
         self.masks1 = self.sam_everything(self.imgs1)
         self.masks2 = self.sam_everything(self.imgs2)
 
-    def img_preprocess(self,im):
-        if len(im.shape) == 2:
-            im = np.stack((im, im, im), axis=-1)
-        # im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-        return im
+    # def img_preprocess(self,im):
+    #     if len(im.shape) == 2:
+    #         im = np.stack((im, im, im), axis=-1)
+    #     im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+        # return im
 
     def sam_everything(self,imgs):
         generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=self.device)
@@ -64,8 +64,8 @@ class RoiMatching():
         return outputs
 
 
-im1 = Image.open("/raid/shiqi/1B_B7_T.png")
-im2 = Image.open("/raid/shiqi/1B_B7_R.png")
+im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
+im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
 imgs = [im1,im2]
 RM = RoiMatching(imgs,imgs,device)
 import pdb
