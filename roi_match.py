@@ -46,8 +46,8 @@ class RoiMatching():
         :param imgs1: list of ndarray images
         :param imgs2:
         """
-        self.imgs1 = [self.img_preprocess(item) for item in imgs1]
-        self.imgs2 = [self.img_preprocess(item) for item in imgs2]
+        self.imgs1 = imgs1
+        self.imgs2 = imgs2
         self.device = device
         self.masks1 = self.sam_everything(self.imgs1)
         self.masks2 = self.sam_everything(self.imgs2)
