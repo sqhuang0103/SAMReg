@@ -5,7 +5,7 @@ from transformers import SamModel, SamProcessor
 import cv2
 
 # device = "cuda:1" if torch.cuda.is_available() else "cpu"
-device = 'cpu'
+device = 'cuda:1'
 # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
 # processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
 #
@@ -22,9 +22,6 @@ device = 'cpu'
 # )
 # scores = outputs.iou_scores
 
-import numpy as np
-import matplotlib.pyplot as plt
-import gc
 
 
 
