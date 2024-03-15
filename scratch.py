@@ -27,7 +27,7 @@ import gc
 
 
 from transformers import pipeline
-generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device='cpu')
+generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device='cuda:1')
 from PIL import Image
 import requests
 
