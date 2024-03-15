@@ -43,25 +43,22 @@ class RoiMatching():
     def __init__(self,imgs1,imgs2,device):
         """
 
-        :param imgs1: list of ndarray images
+        :param imgs1: list of PIL images
         :param imgs2:
         """
         self.imgs1 = imgs1
         self.imgs2 = imgs2
         self.device = device
-        self.masks1 = self.sam_everything(self.imgs1)
+        self.masks1 = self.sam_everything(self.imgs1) # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         self.masks2 = self.sam_everything(self.imgs2)
-
-    # def img_preprocess(self,im):
-    #     if len(im.shape) == 2:
-    #         im = np.stack((im, im, im), axis=-1)
-    #     im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-        # return im
 
     def sam_everything(self,imgs):
         generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=self.device)
-        outputs = generator(imgs, points_per_batch=64)
+        outputs = generator(imgs, points_per_batch=64, pred_iou_thresh=0.90, stability_score_thresh=0.8)
         return outputs
+
+    # def mask_criteria(self):
+        
 
 
 im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
