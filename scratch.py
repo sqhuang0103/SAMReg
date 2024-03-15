@@ -25,23 +25,21 @@ import matplotlib.pyplot as plt
 import gc
 
 
-#
-# from transformers import pipeline
-# generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=0)
-# from PIL import Image
-# import requests
-#
-# img_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
-# raw_image = Image.open(requests.get(img_url, stream=True).raw).convert("RGB")
-#
-# # plt.imshow(raw_image)
-#
-# outputs = generator(raw_image, points_per_batch=64)
-# masks = outputs["masks"] #len 59, masks[0] (480,640)
-# # show_masks_on_image(raw_image, masks)
-#
-# # plt.show()
 
-def add(a,b):
-    return a+b
-add(1,2)
+from transformers import pipeline
+generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device='cpu')
+from PIL import Image
+import requests
+
+img_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/tasks/car.jpg"
+raw_image = Image.open(requests.get(img_url, stream=True).raw).convert("RGB")
+
+# plt.imshow(raw_image)
+
+outputs = generator(raw_image, points_per_batch=64)
+masks = outputs["masks"] #len 59, masks[0] (480,640)
+# show_masks_on_image(raw_image, masks)
+
+# plt.show()
+
+
