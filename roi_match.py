@@ -63,7 +63,7 @@ class RoiMatching():
             for j in range(i + 1, n):
                 mask1, mask2 = masks[i], masks[j]
                 intersection = (mask1 & mask2).sum()
-                smaller_mask_area = min(masks[i]['area'], masks[j]['area'])
+                smaller_mask_area = min(masks[i].sum(), masks[j].sum())
 
                 if smaller_mask_area > 0 and (intersection / smaller_mask_area) >= 0.9:
                     if mask1.sum() < mask2.sum():
