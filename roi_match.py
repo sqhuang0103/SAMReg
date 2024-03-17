@@ -32,6 +32,7 @@ import numpy as np
 import cv2
 import torch
 from torch.nn.functional import cosine_similarity
+from utils import Metric, Vis, Vis_cv2
 
 
 class RoiMatching():
@@ -134,6 +135,52 @@ class RoiMatching():
             masks2_new.append(masks2[j])
         return masks1_new, masks2_new
 
+    def _overlap_pair(self, masks1,masks2):
+        self.masks1_cor = []
+        self.masks2_cor = []
+        k = 0
+        for mask in masks1[:-1]:
+            k += 1
+            print('mask1 {} is finding corresponding region mask...'.format(k))
+            m1 = mask
+            a1 = mask.sum()
+            v1 = np.mean(np.expand_dims(m1, axis=-1) * self.im1)
+            overlap = m1 * masks2[-1].astype(np.int64)
+            # print(np.unique(overlap))
+            if (overlap > 0).sum() / a1 > 0.3:
+                counts = np.bincount(overlap.flatten())
+                # print(counts)
+                sorted_indices = np.argsort(counts)[::-1]
+                top_two = sorted_indices[1:3]
+                # print(top_two)
+                if top_two[-1] == 0:
+                    cor_ind = 0
+                elif abs(counts[top_two[-1]] - counts[top_two[0]]) / max(counts[top_two[-1]], counts[top_two[0]]) < 0.2:
+                    cor_ind = 0
+                else:
+                    # cor_ind = 0
+                    m21 = masks2[top_two[0]-1]
+                    m22 = masks2[top_two[1]-1]
+                    a21 = masks2[top_two[0]-1].sum()
+                    a22 = masks2[top_two[1]-1].sum()
+                    v21 = np.mean(np.expand_dims(m21, axis=-1)*self.im2)
+                    v22 = np.mean(np.expand_dims(m22, axis=-1)*self.im2)
+                    if np.abs(a21-a1) > np.abs(a22-a1):
+                        cor_ind = 0
+                    else:
+                        cor_ind = 1
+                    print('area judge to cor_ind {}'.format(cor_ind))
+                    if np.abs(v21-v1) < np.abs(v22-v1):
+                        cor_ind = 0
+                    else:
+                        cor_ind = 1
+                    # print('value judge to cor_ind {}'.format(cor_ind))
+                # print('mask1 {} has found the corresponding region mask: mask2 {}'.format(k, top_two[cor_ind]))
+
+                self.masks2_cor.append(masks2[top_two[cor_ind] - 1])
+                self.masks1_cor.append(mask)
+        # return masks1_new, masks2_new
+
 
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
@@ -144,12 +191,12 @@ class RoiMatching():
         match self.mode:
             case 'embedding':
                 if len(self.masks1) > 0 and len(self.masks2) > 0:
-                    import pdb
-                    pdb.set_trace()
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
+            case 'overlaping':
+                self._overlap_pair(self.masks1,self.masks2)
 
 
 
@@ -159,4 +206,6 @@ im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
+visualization = Vis_cv2()
+visualization._show_cor_img(im1,im2,RM.masks1,RM.masks2)
 
