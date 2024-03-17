@@ -5,7 +5,7 @@ from transformers import SamModel, SamProcessor
 import cv2
 
 # device = "cuda:1" if torch.cuda.is_available() else "cpu"
-device = 'cuda:0'
+device = 'cuda:1'
 # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
 # processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
 #
