@@ -118,15 +118,21 @@ class RoiMatching():
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
         return sim_matrix
 
-    def _roi_match(self, matrix, protos1, protos2):
+    def _roi_match(self, matrix, masks1, masks2):
         index_pairs = []
-        for _ in range(min(len(protos1), len(protos2))):
+        for _ in range(min(len(masks1), len(masks2))):
             max_sim_idx = torch.argmax(matrix)  # Find the index of the highest value in the matrix
             max_sim_idx = divmod(max_sim_idx, matrix.shape[1])  # Convert to 2D index
             index_pairs.append(max_sim_idx)
             matrix[max_sim_idx[0], :] = -1  # Invalidate this row
             matrix[:, max_sim_idx[1]] = -1  # Invalidate this column
-        return index_pairs
+        masks1_new = []
+        masks2_new = []
+        for i, j in index_pairs:
+            masks1_new.append(masks1[i])
+            masks2_new.append(masks2[j])
+        return masks1_new, masks2_new
+
 
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
@@ -137,10 +143,12 @@ class RoiMatching():
         match self.mode:
             case 'embedding':
                 if len(self.masks1) > 0 and len(self.masks2) > 0:
+                    import pdb
+                    pdb.set_trace()
                     self.embs1 = self._roi_proto(self.img1,self.masks1)
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-                    index_pair = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
+                    self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
 
 
 
