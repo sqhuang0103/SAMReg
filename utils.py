@@ -204,8 +204,10 @@ class Vis_cv2():
         for ind, (mask1, mask2) in enumerate(zip(masks1, masks2)):
             random_color = np.random.randint(0, 256, (3,), dtype=np.uint8)
 
-            image1_with_mask = self.overlay_mask_on_image(image1, mask1['segmentation'], random_color)
-            image2_with_mask = self.overlay_mask_on_image(image2, mask2['segmentation'], random_color)
+            # image1_with_mask = self.overlay_mask_on_image(image1, mask1['segmentation'], random_color)
+            image1_with_mask = self.overlay_mask_on_image(image1, mask1, random_color)
+            # image2_with_mask = self.overlay_mask_on_image(image2, mask2['segmentation'], random_color)
+            image2_with_mask = self.overlay_mask_on_image(image2, mask2, random_color)
 
             # Concatenate images horizontally
             combined_images = np.hstack((image1_with_mask, image2_with_mask))
