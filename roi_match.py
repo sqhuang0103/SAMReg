@@ -53,7 +53,7 @@ class RoiMatching():
         remove_list = set()
         for _i, mask in enumerate(masks):
             # print(mask['area'])
-            if mask['segmentation'].sum() < v_min or mask['segmentation'].sum() > v_max:
+            if mask.sum() < v_min or mask.sum() > v_max:
                 # if mask['segmentation'].sum() < 200 or mask['segmentation'].sum() > 20000:
                 remove_list.add(_i)
         masks = [mask for idx, mask in enumerate(masks) if idx not in remove_list]
@@ -61,7 +61,7 @@ class RoiMatching():
         remove_list = set()
         for i in range(n):
             for j in range(i + 1, n):
-                mask1, mask2 = masks[i]['segmentation'], masks[j]['segmentation']
+                mask1, mask2 = masks[i], masks[j]
                 intersection = (mask1 & mask2).sum()
                 smaller_mask_area = min(masks[i]['area'], masks[j]['area'])
 
