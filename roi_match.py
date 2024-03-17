@@ -110,7 +110,7 @@ class RoiMatching():
 
     def _similarity_matrix(self, protos1, protos2):
         # Initialize similarity_matrix as a torch tensor
-        similarity_matrix = torch.zeros(len(protos1), len(protos2), device=protos1.device)
+        similarity_matrix = torch.zeros(len(protos1), len(protos2), device=self.device)
         for i, vec_a in enumerate(protos1):
             for j, vec_b in enumerate(protos2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
