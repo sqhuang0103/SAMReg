@@ -114,7 +114,7 @@ class RoiMatching():
 
 im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
-device='cpu'
+device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
 
