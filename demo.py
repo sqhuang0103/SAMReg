@@ -63,7 +63,7 @@ def _config():
     parser.add_argument("--tolerance", default=5, type=int)
     parser.add_argument("--num_gpus", default=-1, type=int)
     parser.add_argument("--data_dim", default=2, type=int)
-    parser.add_argument("--device", default='cuda', type=str)
+    parser.add_argument("--device", default='cuda:1', type=str)
     parser.add_argument("--sam_mode", default='vit_h', type=str)
     parser.add_argument("--fix_idx", default=6, type=int)
     parser.add_argument("--mov_idx", default=9, type=int)
