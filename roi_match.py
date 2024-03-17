@@ -3,6 +3,7 @@ from PIL import Image
 import requests
 from transformers import SamModel, SamProcessor
 import cv2
+from scipy.spatial.distance import cosine
 
 # device = "cuda:1" if torch.cuda.is_available() else "cpu"
 device = 'cpu'
@@ -98,6 +99,22 @@ class RoiMatching():
             embs.append(means)
         return embs
 
+    def _cosine_similarity(self,vec1, vec2):
+        return 1 - cosine(vec1, vec2)
+    def _similarity_matrix(self, protos1, protos2):
+        similarity_matrix = np.zeros((len(protos1), len(protos2)))
+        for i, vec_a in enumerate(protos1):
+            for j, vec_b in enumerate(protos2):
+                similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
+        sim_matrix = similarity_matrix.copy()
+        return (sim_matrix - sim_matrix.min()) / (sim_matrix.max() - sim_matrix.min())
+
+    def _roi_match(self,matrix,protos1,protos2):
+        index_pairs = []
+        for i in range(min(len(protos1), len(protos2))):
+            max_sim_idx = np.unravel_index(np.argmax(matrix, axis=None), similarity_matrix.shape)
+            index_pairs.append(max_sim_idx)
+
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         self.masks2 = self._sam_everything(self.img2)
@@ -109,6 +126,8 @@ class RoiMatching():
                 if len(self.masks1) > 0 and len(self.masks2) > 0:
                     self.embs1 = self._roi_proto(self.img1,self.masks1)
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
+                    self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+
 
 
 
