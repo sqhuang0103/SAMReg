@@ -121,11 +121,12 @@ class RoiMatching():
     def _roi_match(self, matrix, masks1, masks2):
         index_pairs = []
         for _ in range(min(len(masks1), len(masks2))):
-            max_sim_idx = torch.argmax(matrix)  # Find the index of the highest value in the matrix
-            max_sim_idx = divmod(max_sim_idx, matrix.shape[1])  # Convert to 2D index
-            index_pairs.append(max_sim_idx)
-            matrix[max_sim_idx[0], :] = -1  # Invalidate this row
-            matrix[:, max_sim_idx[1]] = -1  # Invalidate this column
+            max_sim_idx = torch.argmax(matrix).item()  # Get the index of the highest value as integer
+            row = max_sim_idx // matrix.shape[1]  # Calculate row index
+            col = max_sim_idx % matrix.shape[1]  # Calculate column index
+            index_pairs.append((row, col))
+            matrix[row, :] = -1  # Invalidate this row
+            matrix[:, col] = -1  # Invalidate this column
         masks1_new = []
         masks2_new = []
         for i, j in index_pairs:
@@ -145,7 +146,7 @@ class RoiMatching():
                 if len(self.masks1) > 0 and len(self.masks2) > 0:
                     import pdb
                     pdb.set_trace()
-                    self.embs1 = self._roi_proto(self.img1,self.masks1)
+                    self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
