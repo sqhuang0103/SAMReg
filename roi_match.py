@@ -30,6 +30,8 @@ from transformers import pipeline
 from PIL import Image
 import numpy as np
 import cv2
+import torch
+from torch.nn.functional import cosine_similarity
 
 
 class RoiMatching():
@@ -99,21 +101,32 @@ class RoiMatching():
             embs.append(means)
         return embs
 
-    def _cosine_similarity(self,vec1, vec2):
-        return 1 - cosine(vec1, vec2)
+    def _cosine_similarity(self, vec1, vec2):
+        # Ensure vec1 and vec2 are 2D tensors [1, N]
+        vec1 = vec1.view(1, -1)
+        vec2 = vec2.view(1, -1)
+        # Using PyTorch's cosine_similarity. Need to unsqueeze to add batch dimension.
+        return 1 - cosine_similarity(vec1, vec2).item()
+
     def _similarity_matrix(self, protos1, protos2):
-        similarity_matrix = np.zeros((len(protos1), len(protos2)))
+        # Initialize similarity_matrix as a torch tensor
+        similarity_matrix = torch.zeros(len(protos1), len(protos2), device=protos1.device)
         for i, vec_a in enumerate(protos1):
             for j, vec_b in enumerate(protos2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
-        sim_matrix = similarity_matrix.copy()
-        return (sim_matrix - sim_matrix.min()) / (sim_matrix.max() - sim_matrix.min())
+        # Normalize the similarity matrix
+        sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
+        return sim_matrix
 
-    def _roi_match(self,matrix,protos1,protos2):
+    def _roi_match(self, matrix, protos1, protos2):
         index_pairs = []
-        for i in range(min(len(protos1), len(protos2))):
-            max_sim_idx = np.unravel_index(np.argmax(matrix, axis=None), similarity_matrix.shape)
+        for _ in range(min(len(protos1), len(protos2))):
+            max_sim_idx = torch.argmax(matrix)  # Find the index of the highest value in the matrix
+            max_sim_idx = divmod(max_sim_idx, matrix.shape[1])  # Convert to 2D index
             index_pairs.append(max_sim_idx)
+            matrix[max_sim_idx[0], :] = -1  # Invalidate this row
+            matrix[:, max_sim_idx[1]] = -1  # Invalidate this column
+        return index_pairs
 
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
@@ -127,6 +140,7 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1)
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+                    index_pair = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
 
 
 
