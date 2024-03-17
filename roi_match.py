@@ -28,7 +28,7 @@ device = 'cpu'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=0)
 from PIL import Image
-
+print('start')
 
 
 class RoiMatching():
