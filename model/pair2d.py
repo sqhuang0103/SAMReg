@@ -168,8 +168,8 @@ class PairMasks():
             index_pairs.append(max_sim_idx)
             # pairs.append((masks2[max_sim_idx[0]], masks2[max_sim_idx[1]]))
             # TODO
-            # similarity_matrix[max_sim_idx[0], :] = -1
-            # similarity_matrix[:, max_sim_idx[1]] = -1
+            similarity_matrix[max_sim_idx[0], :] = -1
+            similarity_matrix[:, max_sim_idx[1]] = -1
         # now obtain pairs, index_pairs
 
         self.masks1_cor, self.masks2_cor = self._pair_masks(index_pairs,self.masks1,self.masks2)
