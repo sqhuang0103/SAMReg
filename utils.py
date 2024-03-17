@@ -221,11 +221,13 @@ class Vis_cv2():
         """
         Applies a mask to an image using a specified color.
         """
-        # Create a mask that is True where mask is greater than zero
+        # Create an overlay with the same size as the image, filled with the specified color
+        overlay = np.zeros_like(image)
         mask_indices = mask > 0
-        # Apply color to the original image at mask indices
-        image_with_mask = image.copy()
-        image_with_mask[mask_indices] = cv2.addWeighted(image[mask_indices], 0.5, color, 0.5, 0)
+        overlay[mask_indices] = color  # Apply color where mask is true
+
+        # Blend the overlay with the original image
+        image_with_mask = cv2.addWeighted(image, 0.5, overlay, 0.5, 0)
         return image_with_mask
 
     def _show_merge_cor_img(self, image1, image2, masks1, masks2):
