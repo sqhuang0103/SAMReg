@@ -101,10 +101,8 @@ class RoiMatching():
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         self.masks2 = self._sam_everything(self.img2)
-        import pdb
-        pdb.set_trace()
-        self.masks1 = self._mask_criteria(self.masks1, v_min=self.v_min, v_max=self.v_max)
-        self.masks2 = self._mask_criteria(self.masks2, v_min=self.v_min, v_max=self.v_max)
+        self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
+        self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
 
         match self.mode:
             case 'embedding':
