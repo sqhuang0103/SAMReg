@@ -27,7 +27,8 @@ device = 'cpu'
 
 from transformers import pipeline
 from PIL import Image
-print('start')
+import numpy as np
+import cv2
 
 
 class RoiMatching():
@@ -75,34 +76,47 @@ class RoiMatching():
         model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
         processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
         inputs = processor(image, return_tensors="pt").to(device)
+        # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
         image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
+        # torch.Size([1, 256, 64, 64])
+        embs = []
+        for _m in masks:
+            # Convert mask to uint8, resize, and then back to boolean
+            tmp_m = _m.astype(np.uint8)
+            tmp_m = cv2.resize(tmp_m, (64, 64), interpolation=cv2.INTER_NEAREST)
+            tmp_m = torch.tensor(tmp_m.astype(bool), device=self.device,
+                                 dtype=torch.float32)  # Convert to tensor and send to CUDA
+            tmp_m = tmp_m.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions to match emb1
+
+            # Element-wise multiplication with emb1
+            tmp_emb = image_embeddings * tmp_m
+
+            # Compute mean for each channel, ignoring zeros
+            tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
+            means = torch.nanmean(tmp_emb, dim=(2, 3))  # Compute means, ignoring NaN
+            means[torch.isnan(means)] = 0  # Replace NaN with zeros
+            embs.append(means)
+        return embs
 
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         self.masks2 = self._sam_everything(self.img2)
+        import pdb
+        pdb.set_trace()
         self.masks1 = self._mask_criteria(self.masks1, v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2, v_min=self.v_min, v_max=self.v_max)
 
         match self.mode:
             case 'embedding':
-                if len(self.masks1) > 1 and len(self.masks2) > 1:
-                    self.sam_pair_embedding(self.masks1[:-1],self.masks2[:-1])
-                    self.embedding_pair(self.m1_embs,self.m2_embs)
+                if len(self.masks1) > 0 and len(self.masks2) > 0:
+                    self.embs1 = self._roi_proto(self.img1,self.masks1)
+                    self.embs2 = self._roi_proto(self.img2,self.masks2)
 
 
 
 im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
-
-print('here')
-def roi_proto(image, device = 'cpu',masks=None):
-    print('here')
-    model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
-    processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
-    inputs = processor(image, return_tensors="pt").to(device)
-    image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
-    import pdb
-    pdb.set_trace()
-roi_proto(im1)
-# RM = RoiMatching(imgs,imgs,device)
+device='cpu'
+RM = RoiMatching(im1,im2,device)
+RM.get_paired_roi()
 
