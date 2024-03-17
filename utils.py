@@ -221,29 +221,26 @@ class Vis_cv2():
         """
         Applies a mask to an image using a specified color.
         """
-        colored_mask = np.zeros_like(image)
-        colored_mask[mask > 0] = color
-        # Combine the original image and the colored mask
-        image_with_mask = cv2.addWeighted(image, 1, colored_mask, 0.5, 0)
+        # Create a mask that is True where mask is greater than zero
+        mask_indices = mask > 0
+        # Apply color to the original image at mask indices
+        image_with_mask = image.copy()
+        image_with_mask[mask_indices] = cv2.addWeighted(image[mask_indices], 0.5, color, 0.5, 0)
         return image_with_mask
 
     def _show_merge_cor_img(self, image1, image2, masks1, masks2):
         """
         Displays images with all masks merged onto them.
         """
-        # Initialize empty images with the same shape as the original images
-        image1_all_masks = np.zeros_like(image1)
-        image2_all_masks = np.zeros_like(image2)
+        # Copy the original images to keep them unchanged
+        image1_all_masks = image1.copy()
+        image2_all_masks = image2.copy()
 
-        # Apply each mask to the empty images
+        # Apply each mask to the copy of the original images
         for mask1, mask2 in zip(masks1, masks2):
             random_color = np.random.randint(0, 256, (3,), dtype=np.uint8)
-            # Merge each mask onto the image
-            mask1_colored = self.overlay_merge_mask_on_image(image1_all_masks, mask1, random_color)
-            mask2_colored = self.overlay_merge_mask_on_image(image2_all_masks, mask2, random_color)
-            # Accumulate the masks
-            image1_all_masks = cv2.addWeighted(image1, 1, mask1_colored, 0.5, 0)
-            image2_all_masks = cv2.addWeighted(image2, 1, mask2_colored, 0.5, 0)
+            image1_all_masks = self.overlay_merge_mask_on_image(image1_all_masks, mask1, random_color)
+            image2_all_masks = self.overlay_merge_mask_on_image(image2_all_masks, mask2, random_color)
 
         # Concatenate the images with all masks applied
         combined_images = np.hstack((image1_all_masks, image2_all_masks))
