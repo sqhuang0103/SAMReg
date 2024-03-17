@@ -209,5 +209,5 @@ RM.get_paired_roi()
 visualization = Vis_cv2()
 im1 = cv2.imread("/raid/shiqi/1B_B7_T.png")
 im2 = cv2.imread("/raid/shiqi/1B_B7_R.png")
-visualization._show_cor_img(im1,im2,RM.masks1,RM.masks2)
+visualization._show_merge_cor_img(im1,im2,RM.masks1,RM.masks2)
 

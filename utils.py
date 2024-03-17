@@ -217,6 +217,44 @@ class Vis_cv2():
             # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
+    def overlay_merge_mask_on_image(self,image, mask, color):
+        """
+        Applies a mask to an image using a specified color.
+        """
+        colored_mask = np.zeros_like(image)
+        colored_mask[mask > 0] = color
+        # Combine the original image and the colored mask
+        image_with_mask = cv2.addWeighted(image, 1, colored_mask, 0.5, 0)
+        return image_with_mask
+
+    def _show_merge_cor_img(self, image1, image2, masks1, masks2):
+        """
+        Displays images with all masks merged onto them.
+        """
+        # Initialize empty images with the same shape as the original images
+        image1_all_masks = np.zeros_like(image1)
+        image2_all_masks = np.zeros_like(image2)
+
+        # Apply each mask to the empty images
+        for mask1, mask2 in zip(masks1, masks2):
+            random_color = np.random.randint(0, 256, (3,), dtype=np.uint8)
+            # Merge each mask onto the image
+            mask1_colored = self.overlay_merge_mask_on_image(image1_all_masks, mask1, random_color)
+            mask2_colored = self.overlay_merge_mask_on_image(image2_all_masks, mask2, random_color)
+            # Accumulate the masks
+            image1_all_masks = cv2.addWeighted(image1, 1, mask1_colored, 0.5, 0)
+            image2_all_masks = cv2.addWeighted(image2, 1, mask2_colored, 0.5, 0)
+
+        # Concatenate the images with all masks applied
+        combined_images = np.hstack((image1_all_masks, image2_all_masks))
+
+
+            # Display combined images
+        cv2.imshow('Image Pair with All Masks', combined_images)
+            # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+
     def _show_interpolate_img(self, moving, moved, fixed):
         """
         Displays the moving image, moved image, and fixed image.
