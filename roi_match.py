@@ -73,9 +73,9 @@ class RoiMatching():
         return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
 
     def _roi_proto(self, image, masks):
-        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
+        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
         processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
-        inputs = processor(image, return_tensors="pt").to(device)
+        inputs = processor(image, return_tensors="pt").to(self.device)
         # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
         image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
         # torch.Size([1, 256, 64, 64])
