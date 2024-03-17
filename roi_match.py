@@ -55,7 +55,7 @@ class RoiMatching():
 
 im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
-imgs = [im12]
+imgs = [im1]
 RM = RoiMatching(imgs,imgs,device)
 import pdb
 pdb.set_trace()
