@@ -96,7 +96,7 @@ im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
 
 
-def roi_proto(image, masks=None):
+def roi_proto(image, device = 'cpu',masks=None):
     model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
     processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
     inputs = processor(image, return_tensors="pt").to(device)
