@@ -95,8 +95,9 @@ class RoiMatching():
 im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
 
-
+print('here')
 def roi_proto(image, device = 'cpu',masks=None):
+    print('here')
     model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
     processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
     inputs = processor(image, return_tensors="pt").to(device)
