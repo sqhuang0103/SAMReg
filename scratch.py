@@ -98,7 +98,7 @@ def _mask_criteria(masks, v_min=200, v_max= 7000):
 
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
-device='cuda:2'
+device='cpu'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
 outputs = generator(im1)
@@ -106,6 +106,8 @@ masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
+im1 = cv2.imread("/raid/shiqi/slice_1_3.png")
+im2 = cv2.imread("/raid/shiqi/slice_1_1.png")
 sam = sam_model_registry['vit_h'](checkpoint='/raid/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
 mask_generator = SamAutomaticMaskGenerator(model=sam,
