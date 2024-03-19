@@ -78,9 +78,9 @@ im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
 device='cpu'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
-outputs = generator(im1, points_per_batch=64)
+outputs = generator(im2, points_per_batch=64)
 masks = outputs["masks"]
-visualized_image = visualize_masks(masks, im1)
+visualized_image = visualize_masks(masks, im2)
 cv2.imshow("Visualized Image", visualized_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
