@@ -75,9 +75,9 @@ def visualize_masks(binary_masks, pil_image):
 
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
-device='cuda:0'
+device='cpu'
 from transformers import pipeline
-generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device='cuda:0')
+generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
 outputs = generator(im1, points_per_batch=64)
 masks = outputs["masks"]
 visualized_image = visualize_masks(masks, im1)
