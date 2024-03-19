@@ -81,7 +81,20 @@ def _mask_criteria(masks, v_min=200, v_max= 7000):
             # if mask['segmentation'].sum() < 200 or mask['segmentation'].sum() > 20000:
             remove_list.add(_i)
     masks = [mask for idx, mask in enumerate(masks) if idx not in remove_list]
-    return masks
+    n = len(masks)
+    remove_list = set()
+    for i in range(n):
+        for j in range(i + 1, n):
+            mask1, mask2 = masks[i], masks[j]
+            intersection = (mask1 & mask2).sum()
+            smaller_mask_area = min(masks[i].sum(), masks[j].sum())
+
+            if smaller_mask_area > 0 and (intersection / smaller_mask_area) >= 0.9:
+                if mask1.sum() < mask2.sum():
+                    remove_list.add(i)
+                else:
+                    remove_list.add(j)
+    return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
 
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
