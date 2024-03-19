@@ -73,6 +73,16 @@ def visualize_masks(binary_masks, pil_image):
 
     return result
 
+def _mask_criteria(masks, v_min=200, v_max= 7000):
+    remove_list = set()
+    for _i, mask in enumerate(masks):
+        # print(mask['area'])
+        if mask.sum() < v_min or mask.sum() > v_max:
+            # if mask['segmentation'].sum() < 200 or mask['segmentation'].sum() > 20000:
+            remove_list.add(_i)
+    masks = [mask for idx, mask in enumerate(masks) if idx not in remove_list]
+    return masks
+
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
 device='cpu'
@@ -80,7 +90,10 @@ from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
 outputs = generator(im2, points_per_batch=64)
 masks = outputs["masks"]
+masks = _mask_criteria(masks)
+
 visualized_image = visualize_masks(masks, im2)
 cv2.imshow("Visualized Image", visualized_image)
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
