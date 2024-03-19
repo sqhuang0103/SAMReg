@@ -98,7 +98,7 @@ def _mask_criteria(masks, v_min=200, v_max= 7000):
 
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
-device='cpu'
+device='cuda:2'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
 outputs = generator(im1)
