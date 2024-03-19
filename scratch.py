@@ -105,8 +105,24 @@ outputs = generator(im1)
 masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
+from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
+sam = sam_model_registry['vit_h'](checkpoint='/raid/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+sam.to(device=device)
+mask_generator = SamAutomaticMaskGenerator(model=sam,
+                                                   pred_iou_thresh=0.90, #0.90
+                                                   # min_mask_region_area=150
+                                                   # points_per_side=32
+                                                   stability_score_thresh=0.9, #0.8
+                                                   )
+masks_sam = mask_generator.generate(im1)
+masks_sam = _mask_criteria(masks_sam)
+
 visualized_image = visualize_masks(masks, im1)
 cv2.imshow("Visualized Image", visualized_image)
+
+visualized_image_sam = visualize_masks(masks_sam, im1)
+cv2.imshow("Visualized Image_SAM", visualized_image_sam)
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
