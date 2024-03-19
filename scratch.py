@@ -101,7 +101,7 @@ im2 = Image.open("/raid/shiqi/slice_1_1.png").convert("RGB")
 device='cpu'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
-outputs = generator(im2, points_per_batch=64)
+outputs = generator(im2)
 masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
