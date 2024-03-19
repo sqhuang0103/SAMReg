@@ -118,7 +118,7 @@ def _maskselect(masks, v_min=200, v_max= 7000):
                     remove_list.add(i)
                 else:
                     remove_list.add(j)
-    return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
+    return [mask['segmentation'] for idx, mask in enumerate(masks) if idx not in remove_list]
 
 
 im1 = Image.open("/raid/shiqi/slice_1_3.png").convert("RGB")
@@ -131,8 +131,8 @@ masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
-im1 = cv2.imread("/raid/shiqi/slice_1_3.png")
-im2 = cv2.imread("/raid/shiqi/slice_1_1.png")
+im1_cv = cv2.imread("/raid/shiqi/slice_1_3.png")
+im2_cv = cv2.imread("/raid/shiqi/slice_1_1.png")
 sam = sam_model_registry['vit_h'](checkpoint='/raid/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
 mask_generator = SamAutomaticMaskGenerator(model=sam,
@@ -141,7 +141,7 @@ mask_generator = SamAutomaticMaskGenerator(model=sam,
                                                    # points_per_side=32
                                                    stability_score_thresh=0.9, #0.8
                                                    )
-masks_sam = mask_generator.generate(im1)
+masks_sam = mask_generator.generate(im1_cv)
 masks_sam = _maskselect(masks_sam)
 
 visualized_image = visualize_masks(masks, im1)
