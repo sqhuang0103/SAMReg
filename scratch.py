@@ -121,9 +121,9 @@ def _maskselect(masks, v_min=200, v_max= 7000):
     return [mask['segmentation'] for idx, mask in enumerate(masks) if idx not in remove_list]
 
 
-im1 = Image.open("/raid/candi/shiqi/slice_1_3.png").convert("RGB")
+# im1 = Image.open("/raid/candi/shiqi/slice_1_3.png").convert("RGB")
 # im2 = Image.open("/raid/candi/shiqi/slice_1_1.png").convert("RGB")
-# im1 = Image.open("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png").convert("RGB")
 print(im1.size)
 device='cuda:1'
