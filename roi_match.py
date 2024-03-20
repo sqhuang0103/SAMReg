@@ -51,7 +51,7 @@ class RoiMatching():
 
     def _sam_everything(self,imgs):
         generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=self.device)
-        outputs = generator(imgs, points_per_batch=64, pred_iou_thresh=0.90, stability_score_thresh=0.8)
+        outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
@@ -201,14 +201,14 @@ class RoiMatching():
 
 
 
-im1 = Image.open("/raid/shiqi/1B_B7_T.png").convert("RGB")
-im2 = Image.open("/raid/shiqi/1B_B7_R.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
 visualization = Vis_cv2()
-im1 = cv2.imread("/raid/shiqi/1B_B7_T.png")
-im2 = cv2.imread("/raid/shiqi/1B_B7_R.png")
+im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
+im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
 visualization._show_merge_cor_img(im1,im2,RM.masks1,RM.masks2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
