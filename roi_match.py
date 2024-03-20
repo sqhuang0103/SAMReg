@@ -206,6 +206,35 @@ class RoiMatching():
         #         self._overlap_pair(self.masks1,self.masks2)
 
 
+def visualize_masks(binary_masks, pil_image):
+    # Convert PIL image to numpy array
+    background = np.array(pil_image)
+
+    # Convert RGB to BGR (OpenCV uses BGR color format)
+    background = cv2.cvtColor(background, cv2.COLOR_RGB2BGR)
+
+    # Create a blank mask
+    mask = np.zeros_like(background)
+
+    # Iterate through binary masks and overlay on the blank mask with random colors
+    for idx, binary_mask in enumerate(binary_masks):
+        # Generate a random color for each mask
+        color = tuple(np.random.randint(0, 256, size=3).tolist())
+
+        # Convert binary mask to uint8
+        binary_mask = np.uint8(binary_mask)
+
+        # Create a mask where binary mask is True
+        fg_mask = np.where(binary_mask, 255, 0).astype(np.uint8)
+
+        # Apply the foreground mask on the result with the random color
+        mask[fg_mask > 0] = color
+
+    # Add the mask on top of the background image
+    result = cv2.addWeighted(background, 1, mask, 0.5, 0)
+
+    return result
+
 
 
 im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
@@ -213,10 +242,8 @@ im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("R
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
-visualization = Vis_cv2()
-im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
-im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
-visualization._show_merge_cor_img(im1,im2,RM.masks1,RM.masks2)
+visualize_masks(RM.masks1,im1)
+visualize_masks(RM.masks2,im2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
