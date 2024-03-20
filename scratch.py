@@ -131,8 +131,10 @@ masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
-im1_cv = cv2.imread("/raid/candi/shiqi/slice_1_3.png")
-im2_cv = cv2.imread("/raid/candi/shiqi/slice_1_1.png")
+# im1_cv = cv2.imread("/raid/candi/shiqi/slice_1_3.png")
+im1_cv = cv2.imread(".example/cell/PNT1A_do_1_f00_01_01_R.png")
+im2_cv = cv2.imread(".example/cell/PNT1A_do_1_f00_01_01_T.png")
+# im2_cv = cv2.imread("/raid/candi/shiqi/slice_1_1.png")
 sam = sam_model_registry['vit_h'](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
 mask_generator = SamAutomaticMaskGenerator(model=sam,
