@@ -188,15 +188,22 @@ class RoiMatching():
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
 
-        match self.mode:
-            case 'embedding':
-                if len(self.masks1) > 0 and len(self.masks2) > 0:
-                    self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
-                    self.embs2 = self._roi_proto(self.img2,self.masks2)
-                    self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-                    self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
-            case 'overlaping':
-                self._overlap_pair(self.masks1,self.masks2)
+        if len(self.masks1) > 0 and len(self.masks2) > 0:
+            self.embs1 = self._roi_proto(self.img1, self.masks1)  # device:cuda1
+            self.embs2 = self._roi_proto(self.img2, self.masks2)
+            self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+            self.masks1, self.masks2 = self._roi_match(self.sim_matrix, self.masks1, self.masks2)
+
+
+        # match self.mode:
+        #     case 'embedding':
+        #         if len(self.masks1) > 0 and len(self.masks2) > 0:
+        #             self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
+        #             self.embs2 = self._roi_proto(self.img2,self.masks2)
+        #             self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+        #             self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
+        #     case 'overlaping':
+        #         self._overlap_pair(self.masks1,self.masks2)
 
 
 
