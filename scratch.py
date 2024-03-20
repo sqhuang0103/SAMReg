@@ -126,7 +126,7 @@ im2 = Image.open("/raid/candi/shiqi/slice_1_1.png").convert("RGB")
 device='cuda:1'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
-outputs = generator(im1,points_per_batch=64,pred_iou_thresh=0.70,)
+outputs = generator(im1,points_per_batch=64,pred_iou_thresh=0.95,)
 masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
