@@ -54,19 +54,19 @@ def visualize_masks(binary_masks, pil_image):
     # Create a blank mask
     mask = np.zeros_like(background)
 
-    # Define colors for different masks
-    colors = [(0, 255, 0), (0, 0, 255), (255, 0, 0)]  # You can add more colors as needed
-
-    # Iterate through binary masks and overlay on the blank mask with different colors
+    # Iterate through binary masks and overlay on the blank mask with random colors
     for idx, binary_mask in enumerate(binary_masks):
+        # Generate a random color for each mask
+        color = tuple(np.random.randint(0, 256, size=3).tolist())
+
         # Convert binary mask to uint8
         binary_mask = np.uint8(binary_mask)
 
         # Create a mask where binary mask is True
         fg_mask = np.where(binary_mask, 255, 0).astype(np.uint8)
 
-        # Apply the foreground mask on the result with the corresponding color
-        mask[fg_mask > 0] = colors[idx % len(colors)]
+        # Apply the foreground mask on the result with the random color
+        mask[fg_mask > 0] = color
 
     # Add the mask on top of the background image
     result = cv2.addWeighted(background, 1, mask, 0.5, 0)
