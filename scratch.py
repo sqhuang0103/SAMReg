@@ -123,24 +123,20 @@ def _maskselect(masks, v_min=200, v_max= 7000):
 
 # im1 = Image.open("/raid/candi/shiqi/slice_1_3.png").convert("RGB")
 # im2 = Image.open("/raid/candi/shiqi/slice_1_1.png").convert("RGB")
-im1 = Image.open("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png")
-im2 = Image.open("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png")
-import pdb
-pdb.set_trace()
+im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png")
+im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image2.png")
 print(im1.size)
 device='cuda:1'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
 outputs = generator(im1,points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
-import pdb
-pdb.set_trace()
 masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
 from model.segment_anything import SamAutomaticMaskGenerator, sam_model_registry, SamPredictor
 # im1_cv = cv2.imread("/raid/candi/shiqi/slice_1_3.png")
-im1_cv = cv2.imread("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_R.png")
-im2_cv = cv2.imread("/home/shiqi/SAMReg/example/cell/PNT1A_do_1_f00_01_01_T.png")
+im1_cv = cv2.imread("/home/shiqi/SAMReg/example/cardiac_2d/image1.png")
+im2_cv = cv2.imread("/home/shiqi/SAMReg/example/cardiac_2d/image1.png")
 # im2_cv = cv2.imread("/raid/candi/shiqi/slice_1_1.png")
 sam = sam_model_registry['vit_h'](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
