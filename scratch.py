@@ -123,10 +123,10 @@ def _maskselect(masks, v_min=200, v_max= 7000):
 
 im1 = Image.open("/raid/candi/shiqi/slice_1_3.png").convert("RGB")
 im2 = Image.open("/raid/candi/shiqi/slice_1_1.png").convert("RGB")
-device='cuda:0'
+device='cpu'
 from transformers import pipeline
 generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=device)
-outputs = generator(im1,points_per_batch=64)
+outputs = generator(im1, points_per_batch=64)
 masks = outputs["masks"]
 masks = _mask_criteria(masks)
 
