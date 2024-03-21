@@ -94,6 +94,9 @@ class RoiMatching():
 
             # Element-wise multiplication with emb1
             tmp_emb = image_embeddings * tmp_m
+            import pdb
+            pdb.set_trace()
+            print(tmp_emb.shape)
 
             # Compute mean for each channel, ignoring zeros
             # tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
