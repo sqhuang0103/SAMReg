@@ -237,8 +237,8 @@ def visualize_masks(binary_masks, pil_image):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
