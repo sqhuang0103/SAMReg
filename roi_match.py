@@ -139,8 +139,9 @@ class RoiMatching():
             max_sim_col = torch.arange(len(max_sim_row)).tolist()
             max_sim_idx = list(zip(max_sim_row, max_sim_col))
             index_pairs.append(max_sim_idx)
-            matrix[max_sim_idx[0], :] = -1
-            matrix[:, max_sim_idx[1]] = -1
+            for row, col in max_sim_idx:
+                matrix[row, :] = -1
+                matrix[:, col] = -1
             # max_sim_idx = torch.argmax(matrix).item()  # Get the index of the highest value as integer
             # row = max_sim_idx // matrix.shape[1]  # Calculate row index
             # col = max_sim_idx % matrix.shape[1]  # Calculate column index
