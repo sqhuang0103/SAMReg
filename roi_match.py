@@ -245,8 +245,8 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image2.png").convert("RGB")
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
