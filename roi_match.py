@@ -259,6 +259,8 @@ device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
+RM_emb1 = RM.embs1
+RM_emb2 = RM.embs2
 
 im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
 im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
@@ -272,11 +274,15 @@ masks1 = PairM.masks1_cor[:-1]
 masks2 = PairM.masks2_cor[:-1]
 masks1 = [mask['segmentation'] for mask in masks1]
 masks2 = [mask['segmentation'] for mask in masks2]
-visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+# visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+PM_emb1 = PairM.m1_embs
+PM_emb2 = PairM.m2_embs
+import pdb
+pdb.set_trace()
 
 
-cv2.imshow("Visualized Image 1", visualized_image1)
-cv2.imshow("Visualized Image 2", visualized_image2)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.imshow("Visualized Image 1", visualized_image1)
+# cv2.imshow("Visualized Image 2", visualized_image2)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
