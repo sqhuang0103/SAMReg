@@ -134,12 +134,16 @@ class RoiMatching():
     def _roi_match(self, matrix, masks1, masks2):
         index_pairs = []
         for _ in range(min(len(masks1), len(masks2))):
-            max_sim_idx = torch.argmax(matrix).item()  # Get the index of the highest value as integer
-            row = max_sim_idx // matrix.shape[1]  # Calculate row index
-            col = max_sim_idx % matrix.shape[1]  # Calculate column index
-            index_pairs.append((row, col))
-            matrix[row, :] = -1  # Invalidate this row
-            matrix[:, col] = -1  # Invalidate this column
+            max_sim_idx = torch.unravel_index(torch.argmax(matrix), matrix.shape)
+            index_pairs.append(max_sim_idx)
+            matrix[max_sim_idx[0], :] = -1
+            matrix[:, max_sim_idx[1]] = -1
+            # max_sim_idx = torch.argmax(matrix).item()  # Get the index of the highest value as integer
+            # row = max_sim_idx // matrix.shape[1]  # Calculate row index
+            # col = max_sim_idx % matrix.shape[1]  # Calculate column index
+            # index_pairs.append((row, col))
+            # matrix[row, :] = -1  # Invalidate this row
+            # matrix[:, col] = -1  # Invalidate this column
         masks1_new = []
         masks2_new = []
         for i, j in index_pairs:
