@@ -82,7 +82,7 @@ class RoiMatching():
         sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
         sam.to(device=self.device)
         predictor = SamPredictor(sam)
-        predictor.set_image(image)
+        predictor.set_image(im)
         image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
 
         # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
