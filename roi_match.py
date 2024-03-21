@@ -77,6 +77,7 @@ class RoiMatching():
         return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
 
     def _roi_proto(self, image, masks):
+        im = np.array(image)
         from model.segment_anything import sam_model_registry, SamPredictor
         sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
         sam.to(device=self.device)
