@@ -77,11 +77,18 @@ class RoiMatching():
         return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
 
     def _roi_proto(self, image, masks):
-        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
-        processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
-        inputs = processor(image, return_tensors="pt").to(self.device)
-        # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
-        image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
+        from model.segment_anything import sam_model_registry, SamPredictor
+        sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+        sam.to(device=self.device)
+        predictor = SamPredictor(sam)
+        predictor.set_image(image)
+        image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
+
+        # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
+        # processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
+        # inputs = processor(image, return_tensors="pt").to(self.device)
+        # # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
+        # image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
         # torch.Size([1, 256, 64, 64])
         embs = []
         for _m in masks:
