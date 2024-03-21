@@ -102,7 +102,7 @@ class RoiMatching():
             # means[torch.isnan(means)] = 0  # Replace NaN with zeros
             nonzero_mask = (tmp_emb != 0)
             nonzero_values = tmp_emb[nonzero_mask]
-            emb = torch.mean(nonzero_values, dim=1, keepdim=True)
+            emb = torch.mean(nonzero_values, dim=0, keepdim=True)
             embs.append(emb)
         return embs
 
