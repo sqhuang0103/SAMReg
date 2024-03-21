@@ -206,34 +206,42 @@ class RoiMatching():
         #         self._overlap_pair(self.masks1,self.masks2)
 
 
-def visualize_masks(binary_masks, pil_image):
-    # Convert PIL image to numpy array
-    background = np.array(pil_image)
+
+def visualize_masks(image1, masks1, image2, masks2):
+    # Convert PIL images to numpy arrays
+    background1 = np.array(image1)
+    background2 = np.array(image2)
 
     # Convert RGB to BGR (OpenCV uses BGR color format)
-    background = cv2.cvtColor(background, cv2.COLOR_RGB2BGR)
+    background1 = cv2.cvtColor(background1, cv2.COLOR_RGB2BGR)
+    background2 = cv2.cvtColor(background2, cv2.COLOR_RGB2BGR)
 
-    # Create a blank mask
-    mask = np.zeros_like(background)
+    # Create a blank mask for each image
+    mask1 = np.zeros_like(background1)
+    mask2 = np.zeros_like(background2)
 
-    # Iterate through binary masks and overlay on the blank mask with random colors
-    for idx, binary_mask in enumerate(binary_masks):
-        # Generate a random color for each mask
-        color = tuple(np.random.randint(0, 256, size=3).tolist())
+    # Define colors for different masks
+    colors = [(0, 255, 0), (0, 0, 255), (255, 0, 0), (0, 255, 255)]  # You can add more colors as needed
 
-        # Convert binary mask to uint8
-        binary_mask = np.uint8(binary_mask)
+    # Iterate through mask lists and overlay on the blank masks with different colors
+    for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
+        # Convert binary masks to uint8
+        mask1_item = np.uint8(mask1_item)
+        mask2_item = np.uint8(mask2_item)
 
         # Create a mask where binary mask is True
-        fg_mask = np.where(binary_mask, 255, 0).astype(np.uint8)
+        fg_mask1 = np.where(mask1_item, 255, 0).astype(np.uint8)
+        fg_mask2 = np.where(mask2_item, 255, 0).astype(np.uint8)
 
-        # Apply the foreground mask on the result with the random color
-        mask[fg_mask > 0] = color
+        # Apply the foreground masks on the corresponding masks with the same color
+        mask1[fg_mask1 > 0] = colors[idx % len(colors)]
+        mask2[fg_mask2 > 0] = colors[idx % len(colors)]
 
-    # Add the mask on top of the background image
-    result = cv2.addWeighted(background, 1, mask, 0.5, 0)
+    # Add the masks on top of the background images
+    result1 = cv2.addWeighted(background1, 1, mask1, 0.5, 0)
+    result2 = cv2.addWeighted(background2, 1, mask2, 0.5, 0)
 
-    return result
+    return result1, result2
 
 
 
@@ -242,11 +250,10 @@ im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RG
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
-visualized_image_1 = visualize_masks(RM.masks1,im1)
-cv2.imshow("Visualized Image_1", visualized_image_1)
-visualized_image_2 = visualize_masks(RM.masks2,im2)
-cv2.imshow("Visualized Image_2", visualized_image_2)
 
+visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
+cv2.imshow("Visualized Image 1", visualized_image1)
+cv2.imshow("Visualized Image 2", visualized_image2)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
