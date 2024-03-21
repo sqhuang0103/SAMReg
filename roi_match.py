@@ -100,13 +100,10 @@ class RoiMatching():
             # tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
             # means = torch.nanmean(tmp_emb, dim=(2, 3))  # Compute means, ignoring NaN
             # means[torch.isnan(means)] = 0  # Replace NaN with zeros
-            # embs.append(means)
-            # tmp_emb = torch.mean(tmp_emb[tmp_emb != 0], dim=(1, 2)) if torch.any(tmp_emb != 0) else torch.tensor(0)
-            # tmp_emb = torch.mean(tmp_emb[tmp_emb != 0], dim=(0, 2, 3)) if torch.any(tmp_emb != 0) else torch.tensor(0)
-            masked_tensor = tmp_emb[tmp_emb != 0]
-            mean_values_tensor = torch.mean(masked_tensor, dim=(1, 2))
-            mean_values_tensor[torch.isnan(mean_values_tensor)] = 0  # Replace NaNs with zeros
-            embs.append(mean_values_tensor)
+            nonzero_mask = (tmp_emb != 0)
+            nonzero_values = tmp_emb[nonzero_mask]
+            emb = torch.mean(nonzero_values, dim=1, keepdim=True)
+            embs.append(emb)
         return embs
 
     def _cosine_similarity(self, vec1, vec2):
