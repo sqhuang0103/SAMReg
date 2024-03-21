@@ -273,6 +273,8 @@ from demo import get_pair_masks
 sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
 masks1, masks2 = get_pair_masks(sam, im1, im2)
+masks1 = [mask['segmentation'] for mask in masks1]
+masks2 = [mask['segmentation'] for mask in masks2]
 
 visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
 cv2.imshow("Visualized Image 1", visualized_image1)
