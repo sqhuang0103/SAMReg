@@ -129,7 +129,7 @@ class RoiMatching():
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
         # Normalize the similarity matrix
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
-        return sim_matrix
+        return similarity_matrix
 
     def _roi_match(self, matrix, masks1, masks2):
         index_pairs = []
