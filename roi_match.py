@@ -94,9 +94,7 @@ class RoiMatching():
 
             # Element-wise multiplication with emb1
             tmp_emb = image_embeddings * tmp_m
-            import pdb
-            pdb.set_trace()
-            print(tmp_emb.shape)
+            # (1,256,64,64)
 
             # Compute mean for each channel, ignoring zeros
             # tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
@@ -104,8 +102,11 @@ class RoiMatching():
             # means[torch.isnan(means)] = 0  # Replace NaN with zeros
             # embs.append(means)
             # tmp_emb = torch.mean(tmp_emb[tmp_emb != 0], dim=(1, 2)) if torch.any(tmp_emb != 0) else torch.tensor(0)
-            tmp_emb = torch.mean(tmp_emb[tmp_emb != 0], dim=(0, 2, 3)) if torch.any(tmp_emb != 0) else torch.tensor(0)
-            embs.append(tmp_emb)
+            # tmp_emb = torch.mean(tmp_emb[tmp_emb != 0], dim=(0, 2, 3)) if torch.any(tmp_emb != 0) else torch.tensor(0)
+            masked_tensor = tmp_emb[tmp_emb != 0]
+            mean_values_tensor = torch.mean(masked_tensor, dim=(1, 2))
+            mean_values_tensor[torch.isnan(mean_values_tensor)] = 0  # Replace NaNs with zeros
+            embs.append(mean_values_tensor)
         return embs
 
     def _cosine_similarity(self, vec1, vec2):
