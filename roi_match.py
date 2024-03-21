@@ -243,9 +243,9 @@ device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
 visualized_image_1 = visualize_masks(RM.masks1,im1)
-cv2.imshow("Visualized Image", visualized_image_1)
+cv2.imshow("Visualized Image_1", visualized_image_1)
 visualized_image_2 = visualize_masks(RM.masks2,im2)
-cv2.imshow("Visualized Image", visualized_image_2)
+cv2.imshow("Visualized Image_2", visualized_image_2)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
