@@ -201,22 +201,15 @@ class RoiMatching():
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
 
-        if len(self.masks1) > 0 and len(self.masks2) > 0:
-            self.embs1 = self._roi_proto(self.img1, self.masks1)  # device:cuda1
-            self.embs2 = self._roi_proto(self.img2, self.masks2)
-            self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-            self.masks1, self.masks2 = self._roi_match(self.sim_matrix, self.masks1, self.masks2)
-
-
-        # match self.mode:
-        #     case 'embedding':
-        #         if len(self.masks1) > 0 and len(self.masks2) > 0:
-        #             self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
-        #             self.embs2 = self._roi_proto(self.img2,self.masks2)
-        #             self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-        #             self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
-        #     case 'overlaping':
-        #         self._overlap_pair(self.masks1,self.masks2)
+        match self.mode:
+            case 'embedding':
+                if len(self.masks1) > 0 and len(self.masks2) > 0:
+                    self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
+                    self.embs2 = self._roi_proto(self.img2,self.masks2)
+                    self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+                    self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
+            case 'overlaping':
+                self._overlap_pair(self.masks1,self.masks2)
 
 
 
@@ -272,11 +265,12 @@ from model.segment_anything import sam_model_registry, SamPredictor
 from demo import get_pair_masks
 sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
 sam.to(device=device)
-masks1, masks2 = get_pair_masks(sam, im1, im2)
+masks1, masks2 = get_pair_masks(sam, im1, im2,num_pair=6)
 masks1 = [mask['segmentation'] for mask in masks1]
 masks2 = [mask['segmentation'] for mask in masks2]
 
 visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+# visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 cv2.imshow("Visualized Image 1", visualized_image1)
 cv2.imshow("Visualized Image 2", visualized_image2)
 cv2.waitKey(0)
