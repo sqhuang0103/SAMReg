@@ -193,6 +193,8 @@ class RoiMatching():
         # return masks1_new, masks2_new
 
 
+
+
     def get_paired_roi(self):
         self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         self.masks2 = self._sam_everything(self.img2)
@@ -215,6 +217,8 @@ class RoiMatching():
         #             self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
         #     case 'overlaping':
         #         self._overlap_pair(self.masks1,self.masks2)
+
+
 
 
 
@@ -256,13 +260,21 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
+# im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+# im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
+im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
+im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
 device='cuda:1'
-RM = RoiMatching(im1,im2,device)
-RM.get_paired_roi()
+# RM = RoiMatching(im1,im2,device)
+# RM.get_paired_roi()
 
-visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
+from model.segment_anything import sam_model_registry, SamPredictor
+from demo import get_pair_masks
+sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+sam.to(device=device)
+masks1, masks2 = get_pair_masks(sam, im1, im2)
+
+visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
 cv2.imshow("Visualized Image 1", visualized_image1)
 cv2.imshow("Visualized Image 2", visualized_image2)
 cv2.waitKey(0)
