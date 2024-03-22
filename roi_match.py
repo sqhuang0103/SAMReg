@@ -84,8 +84,6 @@ class RoiMatching():
         predictor = SamPredictor(sam)
         predictor.set_image(im)
         image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
-        import pdb
-        pdb.set_trace()
 
         # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
         # processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
