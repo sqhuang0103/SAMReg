@@ -128,12 +128,19 @@ class RoiMatching():
 
     def _roi_match(self, matrix, masks1, masks2):
         index_pairs = []
-        for _ in range(min(len(masks1), len(masks2))):
+        while torch.any(matrix > 0.5):
             max_idx = torch.argmax(matrix)
             max_sim_idx = (max_idx // matrix.shape[1], max_idx % matrix.shape[1])
-            index_pairs.append(max_sim_idx)
+            if matrix[max_sim_idx[0], max_sim_idx[1]] > 0.5:
+                index_pairs.append(max_sim_idx)
             matrix[max_sim_idx[0], :] = -1
             matrix[:, max_sim_idx[1]] = -1
+        # for _ in range(min(len(masks1), len(masks2))):
+        #     max_idx = torch.argmax(matrix)
+        #     max_sim_idx = (max_idx // matrix.shape[1], max_idx % matrix.shape[1])
+        #     index_pairs.append(max_sim_idx)
+        #     matrix[max_sim_idx[0], :] = -1
+        #     matrix[:, max_sim_idx[1]] = -1
         masks1_new = []
         masks2_new = []
         for i, j in index_pairs:
