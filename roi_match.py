@@ -92,8 +92,6 @@ class RoiMatching():
         # image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
         # torch.Size([1, 256, 64, 64])
         embs = []
-        import pdb
-        pdb.set_trace()
         for _m in masks:
             # Convert mask to uint8, resize, and then back to boolean
             tmp_m = _m.astype(np.uint8)
@@ -106,15 +104,11 @@ class RoiMatching():
             tmp_emb = image_embeddings * tmp_m
             # (1,256,64,64)
 
-            # Compute mean for each channel, ignoring zeros
-            # tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
-            # means = torch.nanmean(tmp_emb, dim=(2, 3))  # Compute means, ignoring NaN
-            # means[torch.isnan(means)] = 0  # Replace NaN with zeros
-            # 将 tmp_emb 中非零值的位置找出
             tmp_emb[tmp_emb == 0] = torch.nan
             emb = torch.nanmean(tmp_emb, dim=(2, 3))
             emb[torch.isnan(emb)] = 0
             embs.append(emb)
+            print(emb.shape,emb.max())
         return embs
 
     def _cosine_similarity(self, vec1, vec2):
