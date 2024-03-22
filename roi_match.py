@@ -271,7 +271,7 @@ masks1 = PairM.masks1_cor[:-1]
 masks2 = PairM.masks2_cor[:-1]
 masks1 = [mask['segmentation'] for mask in masks1]
 masks2 = [mask['segmentation'] for mask in masks2]
-# visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
 PM_emb1 = PairM.m1_embs
 PM_emb2 = PairM.m2_embs
 
