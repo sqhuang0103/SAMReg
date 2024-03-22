@@ -92,6 +92,8 @@ class RoiMatching():
         # image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
         # torch.Size([1, 256, 64, 64])
         embs = []
+        import pdb
+        pdb.set_trace()
         for _m in masks:
             # Convert mask to uint8, resize, and then back to boolean
             tmp_m = _m.astype(np.uint8)
