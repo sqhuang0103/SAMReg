@@ -113,7 +113,6 @@ class RoiMatching():
         # Ensure vec1 and vec2 are 2D tensors [1, N]
         vec1 = vec1.view(1, -1)
         vec2 = vec2.view(1, -1)
-        # Using PyTorch's cosine_similarity. Need to unsqueeze to add batch dimension.
         return cosine_similarity(vec1, vec2).item()
 
     def _similarity_matrix(self, protos1, protos2):
@@ -200,6 +199,7 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+                    print(self.sim_matrix.min(),self.sim_matrix.max())
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
