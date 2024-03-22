@@ -161,7 +161,8 @@ class PairMasks():
         for i, vec_a in enumerate(masks1):
             for j, vec_b in enumerate(masks2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
-        print(similarity_matrix.max(),similarity_matrix.min())
+                print('PM: ', vec_a.max(), vec_b.max(),similarity_matrix[i,j])
+
         sim_matrix = similarity_matrix.copy()
         self.similarity_matrix = (sim_matrix-sim_matrix.min())/(sim_matrix.max()-sim_matrix.min())
         index_pairs = []

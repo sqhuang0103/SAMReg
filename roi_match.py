@@ -123,6 +123,7 @@ class RoiMatching():
         for i, vec_a in enumerate(protos1):
             for j, vec_b in enumerate(protos2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
+                print('RM: ', vec_a.max(), vec_b.max(),similarity_matrix[i,j])
         # Normalize the similarity matrix
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
         return similarity_matrix
@@ -203,7 +204,6 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-                    print(self.sim_matrix.max(),self.sim_matrix.min())
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
