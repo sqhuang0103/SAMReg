@@ -223,10 +223,27 @@ def visualize_masks(image1, masks1, image2, masks2):
     mask1 = np.zeros_like(background1)
     mask2 = np.zeros_like(background2)
 
+    distinct_colors = [
+        (255, 0, 0),  # Red
+        (0, 255, 0),  # Green
+        (0, 0, 255),  # Blue
+        (255, 255, 0),  # Cyan
+        (255, 0, 255),  # Magenta
+        (0, 255, 255),  # Yellow
+        (128, 0, 0),  # Maroon
+        (0, 128, 0),  # Olive
+        (0, 0, 128),  # Navy
+        (128, 128, 0),  # Teal
+        (128, 0, 128),  # Purple
+        (0, 128, 128),  # Gray
+        (192, 192, 192)  # Silver
+    ]
+
 
     # Iterate through mask lists and overlay on the blank masks with different colors
     for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
-        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        # color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        color = distinct_colors[idx % len(distinct_colors)]
         # Convert binary masks to uint8
         mask1_item = np.uint8(mask1_item)
         mask2_item = np.uint8(mask2_item)
