@@ -120,7 +120,7 @@ class RoiMatching():
             nonzero_values[torch.isnan(nonzero_values)] = 0
 
             # 计算每个平面的非零部分的平均值
-            emb = torch.mean(nonzero_values, dim=(1, 2))
+            emb = torch.mean(nonzero_values, dim=(2, 3), keepdim=True)
 
             # 输出emb的大小
             print("Shape of emb:", emb.shape)
