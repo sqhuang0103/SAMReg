@@ -126,7 +126,7 @@ class RoiMatching():
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
         return similarity_matrix
 
-    def _roi_match(self, matrix, masks1, masks2, sim_criteria=0.8):
+    def _roi_match(self, matrix, masks1, masks2, sim_criteria=0.88):
         index_pairs = []
         while torch.any(matrix > sim_criteria):
             max_idx = torch.argmax(matrix)
