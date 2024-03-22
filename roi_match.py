@@ -54,7 +54,7 @@ class RoiMatching():
     def _sam_everything(self,imgs):
         generator = pipeline("mask-generation", model=self.url, device=self.device)
         # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
-        outputs = generator(imgs,stability_score_thresh=0.8)
+        outputs = generator(imgs,stability_score_thresh=0.7)
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
