@@ -53,8 +53,8 @@ class RoiMatching():
 
     def _sam_everything(self,imgs):
         generator = pipeline("mask-generation", model=self.url, device=self.device)
-        # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
-        outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.8,) # for medsam
+        outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
+        # outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,) #medsam
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
@@ -137,12 +137,6 @@ class RoiMatching():
                 index_pairs.append(max_sim_idx)
             matrix[max_sim_idx[0], :] = -1
             matrix[:, max_sim_idx[1]] = -1
-        # for _ in range(min(len(masks1), len(masks2))):
-        #     max_idx = torch.argmax(matrix)
-        #     max_sim_idx = (max_idx // matrix.shape[1], max_idx % matrix.shape[1])
-        #     index_pairs.append(max_sim_idx)
-        #     matrix[max_sim_idx[0], :] = -1
-        #     matrix[:, max_sim_idx[1]] = -1
         masks1_new = []
         masks2_new = []
         for i, j in index_pairs:
