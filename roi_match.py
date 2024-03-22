@@ -250,30 +250,30 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image2.png").convert("RGB")
 device='cuda:1'
-# RM = RoiMatching(im1,im2,device)
-# RM.get_paired_roi()
-# visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
-# RM_emb1 = RM.embs1
-# RM_emb2 = RM.embs2
+RM = RoiMatching(im1,im2,device)
+RM.get_paired_roi()
+visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
+RM_emb1 = RM.embs1
+RM_emb2 = RM.embs2
 
-im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
-im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
-from model.segment_anything import sam_model_registry, SamPredictor
-from demo import get_pair_masks
-from model.pair2d import PairMasks
-sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
-sam.to(device=device)
-PairM = PairMasks(sam, im1, im2, mode='embedding')
-masks1 = PairM.masks1_cor[:-1]
-masks2 = PairM.masks2_cor[:-1]
-masks1 = [mask['segmentation'] for mask in masks1]
-masks2 = [mask['segmentation'] for mask in masks2]
-visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
-PM_emb1 = PairM.m1_embs
-PM_emb2 = PairM.m2_embs
+# im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
+# im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
+# from model.segment_anything import sam_model_registry, SamPredictor
+# from demo import get_pair_masks
+# from model.pair2d import PairMasks
+# sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+# sam.to(device=device)
+# PairM = PairMasks(sam, im1, im2, mode='embedding')
+# masks1 = PairM.masks1_cor[:-1]
+# masks2 = PairM.masks2_cor[:-1]
+# masks1 = [mask['segmentation'] for mask in masks1]
+# masks2 = [mask['segmentation'] for mask in masks2]
+# visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+# PM_emb1 = PairM.m1_embs
+# PM_emb2 = PairM.m2_embs
 
 
 cv2.imshow("Visualized Image 1", visualized_image1)
