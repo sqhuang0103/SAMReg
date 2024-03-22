@@ -57,9 +57,7 @@ class RoiMatching():
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
         for _i, mask in enumerate(masks):
-            # print(mask['area'])
             if mask.sum() < v_min or mask.sum() > v_max:
-                # if mask['segmentation'].sum() < 200 or mask['segmentation'].sum() > 20000:
                 remove_list.add(_i)
         masks = [mask for idx, mask in enumerate(masks) if idx not in remove_list]
         n = len(masks)
@@ -78,19 +76,19 @@ class RoiMatching():
         return [mask for idx, mask in enumerate(masks) if idx not in remove_list]
 
     def _roi_proto(self, image, masks):
-        im = np.array(image)
-        from model.segment_anything import sam_model_registry, SamPredictor
-        sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
-        sam.to(device=self.device)
-        predictor = SamPredictor(sam)
-        predictor.set_image(im)
-        image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
+        # im = np.array(image)
+        # from model.segment_anything import sam_model_registry, SamPredictor
+        # sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+        # sam.to(device=self.device)
+        # predictor = SamPredictor(sam)
+        # predictor.set_image(im)
+        # image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
 
-        # model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
-        # processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
-        # inputs = processor(image, return_tensors="pt").to(self.device)
+        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
+        processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
+        inputs = processor(image, return_tensors="pt").to(self.device)
         # # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
-        # image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
+        image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
         # torch.Size([1, 256, 64, 64])
         embs = []
         for _m in masks:
