@@ -115,8 +115,6 @@ class PairMasks():
         emb1 = predictor.get_image_embedding().cpu().numpy()  # (1, 256, 64, 64)
         predictor.set_image(self.im2)
         emb2 = predictor.get_image_embedding().cpu().numpy()
-        import pdb
-        pdb.set_trace()
         # print(emb1.shape, emb2.shape)
         self.m1_embs = []
         self.m2_embs = []
