@@ -37,7 +37,7 @@ from utils import Metric, Vis, Vis_cv2
 
 
 class RoiMatching():
-    def __init__(self,img1,img2,device='cuda:1', v_min=200, v_max= 7000, mode = 'embedding', url = "facebook/sam-vit-huge"):
+    def __init__(self,img1,img2,device='cuda:1', v_min=200, v_max= 7000, mode = 'embedding', url = "facebook/sam-vit-huge", sim_criteria = 0.8):
         """
         Initialize
         :param img1: PIL image
@@ -50,6 +50,7 @@ class RoiMatching():
         self.v_max = v_max
         self.mode = mode
         self.url = url
+        self.sim_criteria = sim_criteria
 
     def _sam_everything(self,imgs):
         generator = pipeline("mask-generation", model=self.url, device=self.device)
@@ -202,8 +203,7 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-                    print(self.sim_matrix.min(),self.sim_matrix.max())
-                    self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
+                    self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2,self.sim_criteria)
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
@@ -277,7 +277,7 @@ def visualize_masks(image1, masks1, image2, masks2):
 im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:1'
-url="wanglab/medsam-vit-base" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 RM = RoiMatching(im1,im2,device,url=url)
 RM.get_paired_roi()
 visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
