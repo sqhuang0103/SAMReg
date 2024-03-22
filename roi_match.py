@@ -54,7 +54,7 @@ class RoiMatching():
     def _sam_everything(self,imgs):
         generator = pipeline("mask-generation", model=self.url, device=self.device)
         # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
-        outputs = generator(imgs,stability_score_thresh=0.7)
+        outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,)
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
@@ -280,11 +280,11 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image2.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:1'
-url="wanglab/medsam-vit-base"
-RM = RoiMatching(im1,im2,device,url=url) #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+url="wanglab/medsam-vit-base" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+RM = RoiMatching(im1,im2,device,url=url)
 RM.get_paired_roi()
 visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
