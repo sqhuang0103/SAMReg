@@ -239,11 +239,19 @@ def visualize_masks(image1, masks1, image2, masks2):
         (192, 192, 192)  # Silver
     ]
 
+    def random_color():
+        """Generate a random color with high saturation and value in HSV color space."""
+        hue = random.randint(0, 179)  # Random hue value between 0 and 179 (HSV uses 0-179 range)
+        saturation = random.randint(200, 255)  # High saturation value between 200 and 255
+        value = random.randint(200, 255)  # High value (brightness) between 200 and 255
+        color = np.array([[[hue, saturation, value]]], dtype=np.uint8)
+        return cv2.cvtColor(color, cv2.COLOR_HSV2BGR)[0][0]
+
 
     # Iterate through mask lists and overlay on the blank masks with different colors
     for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
         # color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        color = distinct_colors[idx % len(distinct_colors)]
+        # color = distinct_colors[idx % len(distinct_colors)]
         # Convert binary masks to uint8
         mask1_item = np.uint8(mask1_item)
         mask2_item = np.uint8(mask2_item)
@@ -253,8 +261,8 @@ def visualize_masks(image1, masks1, image2, masks2):
         fg_mask2 = np.where(mask2_item, 255, 0).astype(np.uint8)
 
         # Apply the foreground masks on the corresponding masks with the same color
-        mask1[fg_mask1 > 0] = color
-        mask2[fg_mask2 > 0] = color
+        mask1[fg_mask1 > 0] = random_color()
+        mask2[fg_mask2 > 0] = random_color()
 
     # Add the masks on top of the background images
     result1 = cv2.addWeighted(background1, 1, mask1, 0.5, 0)
