@@ -110,19 +110,20 @@ class RoiMatching():
             # tmp_emb[tmp_emb == 0] = np.nan  # Replace zeros with NaN for mean computation
             # means = torch.nanmean(tmp_emb, dim=(2, 3))  # Compute means, ignoring NaN
             # means[torch.isnan(means)] = 0  # Replace NaN with zeros
-            nonzero_mask = tmp_emb[0] != 0
-            nonzero_values = tmp_emb[:, nonzero_mask]
+            # 将 tmp_emb 中非零值的位置找出
+            nonzero_mask = tmp_emb != 0
 
-            # 输出非零值的最大值和最小值，以便进行调试
-            print("Max value of nonzero_values:", torch.max(nonzero_values))
-            print("Min value of nonzero_values:", torch.min(nonzero_values))
+            # 使用掩码将 tmp_emb 中非零值取出
+            nonzero_values = tmp_emb[nonzero_mask]
 
-            # 计算非零部分的平均值
-            emb = torch.mean(nonzero_values, dim=1)
+            # 将NaN值替换为0
+            nonzero_values[torch.isnan(nonzero_values)] = 0
 
-            # 输出emb的最大值和最小值，以便进行调试
-            print("Max value of emb:", torch.max(emb))
-            print("Min value of emb:", torch.min(emb))
+            # 计算每个平面的非零部分的平均值
+            emb = torch.mean(nonzero_values, dim=(1, 2))
+
+            # 输出emb的大小
+            print("Shape of emb:", emb.shape)
             embs.append(emb)
         return embs
 
