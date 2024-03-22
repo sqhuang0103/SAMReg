@@ -4,6 +4,7 @@ import requests
 from transformers import SamModel, SamProcessor
 import cv2
 from scipy.spatial.distance import cosine
+import random
 
 # device = "cuda:1" if torch.cuda.is_available() else "cpu"
 device = 'cpu'
@@ -222,11 +223,10 @@ def visualize_masks(image1, masks1, image2, masks2):
     mask1 = np.zeros_like(background1)
     mask2 = np.zeros_like(background2)
 
-    # Define colors for different masks
-    colors = [(0, 255, 0), (0, 0, 255), (255, 0, 0), (0, 255, 255)]  # You can add more colors as needed
 
     # Iterate through mask lists and overlay on the blank masks with different colors
     for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         # Convert binary masks to uint8
         mask1_item = np.uint8(mask1_item)
         mask2_item = np.uint8(mask2_item)
@@ -236,8 +236,8 @@ def visualize_masks(image1, masks1, image2, masks2):
         fg_mask2 = np.where(mask2_item, 255, 0).astype(np.uint8)
 
         # Apply the foreground masks on the corresponding masks with the same color
-        mask1[fg_mask1 > 0] = colors[idx % len(colors)]
-        mask2[fg_mask2 > 0] = colors[idx % len(colors)]
+        mask1[fg_mask1 > 0] = color
+        mask2[fg_mask2 > 0] = color
 
     # Add the masks on top of the background images
     result1 = cv2.addWeighted(background1, 1, mask1, 0.5, 0)
