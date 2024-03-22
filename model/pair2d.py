@@ -127,6 +127,8 @@ class PairMasks():
 
             tmp_emb = np.array(
                 [np.mean(channel[channel != 0]) if np.any(channel != 0) else 0 for channel in tmp_emb[0]])
+            print('PM: ',tmp_emb.shape,tmp_emb.max())
+
             self.m1_embs.append(tmp_emb)
 
         for _m in masks2:
