@@ -108,7 +108,6 @@ class RoiMatching():
             emb = torch.nanmean(tmp_emb, dim=(2, 3))
             emb[torch.isnan(emb)] = 0
             embs.append(emb)
-            print('RM: ',emb.shape,emb.max())
         return embs
 
     def _cosine_similarity(self, vec1, vec2):
@@ -204,6 +203,7 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
+                    print(self.sim_matrix.max(),self.sim_matrix.min())
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2)
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)

@@ -127,7 +127,6 @@ class PairMasks():
 
             tmp_emb = np.array(
                 [np.mean(channel[channel != 0]) if np.any(channel != 0) else 0 for channel in tmp_emb[0]])
-            print('PM: ',tmp_emb.shape,tmp_emb.max())
 
             self.m1_embs.append(tmp_emb)
 
@@ -162,6 +161,7 @@ class PairMasks():
         for i, vec_a in enumerate(masks1):
             for j, vec_b in enumerate(masks2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
+        print(similarity_matrix.max(),similarity_matrix.min())
         sim_matrix = similarity_matrix.copy()
         self.similarity_matrix = (sim_matrix-sim_matrix.min())/(sim_matrix.max()-sim_matrix.min())
         index_pairs = []
