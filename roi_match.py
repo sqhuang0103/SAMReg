@@ -84,8 +84,8 @@ class RoiMatching():
         # predictor.set_image(im)
         # image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
 
-        model = SamModel.from_pretrained("facebook/sam-vit-huge").to(self.device)
-        processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
+        model = SamModel.from_pretrained("wanglab/medsam-vit-base").to(self.device) #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+        processor = SamProcessor.from_pretrained("wanglab/medsam-vit-base")
         inputs = processor(image, return_tensors="pt").to(self.device)
         # # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
         image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
