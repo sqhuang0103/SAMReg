@@ -126,7 +126,7 @@ class RoiMatching():
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
         return similarity_matrix
 
-    def _roi_match(self, matrix, masks1, masks2, sim_criteria=0.88):
+    def _roi_match(self, matrix, masks1, masks2, sim_criteria=0.9):
         index_pairs = []
         while torch.any(matrix > sim_criteria):
             max_idx = torch.argmax(matrix)
@@ -278,8 +278,8 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:1'
 RM = RoiMatching(im1,im2,device)
 RM.get_paired_roi()
