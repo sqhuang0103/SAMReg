@@ -115,7 +115,7 @@ class RoiMatching():
         vec1 = vec1.view(1, -1)
         vec2 = vec2.view(1, -1)
         # Using PyTorch's cosine_similarity. Need to unsqueeze to add batch dimension.
-        return 1 - cosine_similarity(vec1, vec2).item()
+        return cosine_similarity(vec1, vec2).item()
 
     def _similarity_matrix(self, protos1, protos2):
         # Initialize similarity_matrix as a torch tensor
@@ -123,7 +123,7 @@ class RoiMatching():
         for i, vec_a in enumerate(protos1):
             for j, vec_b in enumerate(protos2):
                 similarity_matrix[i, j] = self._cosine_similarity(vec_a, vec_b)
-                print('RM: ', vec_a.max(), vec_b.max(),similarity_matrix[i,j])
+                # print('RM: ', vec_a.max(), vec_b.max(),similarity_matrix[i,j])
         # Normalize the similarity matrix
         sim_matrix = (similarity_matrix - similarity_matrix.min()) / (similarity_matrix.max() - similarity_matrix.min())
         return similarity_matrix
@@ -259,25 +259,25 @@ visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.m
 RM_emb1 = RM.embs1
 RM_emb2 = RM.embs2
 
-im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
-im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
-from model.segment_anything import sam_model_registry, SamPredictor
-from demo import get_pair_masks
-from model.pair2d import PairMasks
-sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
-sam.to(device=device)
-PairM = PairMasks(sam, im1, im2, mode='embedding')
-masks1 = PairM.masks1_cor[:-1]
-masks2 = PairM.masks2_cor[:-1]
-masks1 = [mask['segmentation'] for mask in masks1]
-masks2 = [mask['segmentation'] for mask in masks2]
-# visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
-PM_emb1 = PairM.m1_embs
-PM_emb2 = PairM.m2_embs
+# im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
+# im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
+# from model.segment_anything import sam_model_registry, SamPredictor
+# from demo import get_pair_masks
+# from model.pair2d import PairMasks
+# sam = sam_model_registry["vit_h"](checkpoint='/raid/candi/shiqi/sam_pretrained/sam_vit_h_4b8939.pth')
+# sam.to(device=device)
+# PairM = PairMasks(sam, im1, im2, mode='embedding')
+# masks1 = PairM.masks1_cor[:-1]
+# masks2 = PairM.masks2_cor[:-1]
+# masks1 = [mask['segmentation'] for mask in masks1]
+# masks2 = [mask['segmentation'] for mask in masks2]
+# # visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
+# PM_emb1 = PairM.m1_embs
+# PM_emb2 = PairM.m2_embs
 
 
-# cv2.imshow("Visualized Image 1", visualized_image1)
-# cv2.imshow("Visualized Image 2", visualized_image2)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+cv2.imshow("Visualized Image 1", visualized_image1)
+cv2.imshow("Visualized Image 2", visualized_image2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
