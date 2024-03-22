@@ -252,6 +252,7 @@ def visualize_masks(image1, masks1, image2, masks2):
     for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
         # color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         # color = distinct_colors[idx % len(distinct_colors)]
+        color = random_color()
         # Convert binary masks to uint8
         mask1_item = np.uint8(mask1_item)
         mask2_item = np.uint8(mask2_item)
@@ -261,8 +262,8 @@ def visualize_masks(image1, masks1, image2, masks2):
         fg_mask2 = np.where(mask2_item, 255, 0).astype(np.uint8)
 
         # Apply the foreground masks on the corresponding masks with the same color
-        mask1[fg_mask1 > 0] = random_color()
-        mask2[fg_mask2 > 0] = random_color()
+        mask1[fg_mask1 > 0] = color
+        mask2[fg_mask2 > 0] = color
 
     # Add the masks on top of the background images
     result1 = cv2.addWeighted(background1, 1, mask1, 0.5, 0)
