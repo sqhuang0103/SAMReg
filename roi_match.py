@@ -37,7 +37,7 @@ from utils import Metric, Vis, Vis_cv2
 
 
 class RoiMatching():
-    def __init__(self,img1,img2,device='cuda:1', v_min=200, v_max= 7000, mode = 'embedding'):
+    def __init__(self,img1,img2,device='cuda:1', v_min=200, v_max= 7000, mode = 'embedding', url = "facebook/sam-vit-huge"):
         """
         Initialize
         :param img1: PIL image
@@ -49,10 +49,12 @@ class RoiMatching():
         self.v_min = v_min
         self.v_max = v_max
         self.mode = mode
+        self.url = url
 
     def _sam_everything(self,imgs):
-        generator = pipeline("mask-generation", model="wanglab/medsam-vit-base", device=self.device)
-        outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
+        generator = pipeline("mask-generation", model=self.url, device=self.device)
+        # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
+        outputs = generator(imgs)
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
@@ -84,8 +86,8 @@ class RoiMatching():
         # predictor.set_image(im)
         # image_embeddings = predictor.get_image_embedding() # .cpu().numpy()  # (1, 256, 64, 64)
 
-        model = SamModel.from_pretrained("wanglab/medsam-vit-base").to(self.device) #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
-        processor = SamProcessor.from_pretrained("wanglab/medsam-vit-base")
+        model = SamModel.from_pretrained(self.url).to(self.device) #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+        processor = SamProcessor.from_pretrained(self.url)
         inputs = processor(image, return_tensors="pt").to(self.device)
         # # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
         image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
@@ -281,7 +283,8 @@ def visualize_masks(image1, masks1, image2, masks2):
 im1 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image1.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/cardiac_2d/image2.png").convert("RGB")
 device='cuda:1'
-RM = RoiMatching(im1,im2,device)
+url="wanglab/medsam-vit-base"
+RM = RoiMatching(im1,im2,device,url=url) #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 RM.get_paired_roi()
 visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
