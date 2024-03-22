@@ -112,8 +112,17 @@ class RoiMatching():
             # means[torch.isnan(means)] = 0  # Replace NaN with zeros
             nonzero_mask = tmp_emb[0] != 0
             nonzero_values = tmp_emb[:, nonzero_mask]
-            nonzero_values[torch.isnan(nonzero_values)] = 0
+
+            # 输出非零值的最大值和最小值，以便进行调试
+            print("Max value of nonzero_values:", torch.max(nonzero_values))
+            print("Min value of nonzero_values:", torch.min(nonzero_values))
+
+            # 计算非零部分的平均值
             emb = torch.mean(nonzero_values, dim=1)
+
+            # 输出emb的最大值和最小值，以便进行调试
+            print("Max value of emb:", torch.max(emb))
+            print("Min value of emb:", torch.min(emb))
             embs.append(emb)
         return embs
 
