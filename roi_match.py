@@ -51,7 +51,7 @@ class RoiMatching():
         self.mode = mode
 
     def _sam_everything(self,imgs):
-        generator = pipeline("mask-generation", model="facebook/sam-vit-huge", device=self.device)
+        generator = pipeline("mask-generation", model="wanglab/medsam-vit-base", device=self.device)
         outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
