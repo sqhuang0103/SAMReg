@@ -207,6 +207,9 @@ class RoiMatching():
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
+    # def get_prompt_roi(self):
+
+
 
 
 
@@ -276,7 +279,7 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
-device='cuda:1'
+device='cpu'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 RM = RoiMatching(im1,im2,device,url=url)
 RM.get_paired_roi()
