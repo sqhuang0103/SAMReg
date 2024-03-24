@@ -284,7 +284,7 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
-device='cpu'
+device='cuda:0'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 RM = RoiMatching(im1,im2,device,url=url)
 RM.get_paired_roi()
