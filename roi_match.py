@@ -205,7 +205,7 @@ class RoiMatching():
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
         time_2 = time.time()
-        print(f"Inference Time 2: {time_2 - start_time:.3f} seconds")
+        print(f"Inference Time 2: {time_2 - time_1:.3f} seconds")
 
         match self.mode:
             case 'embedding':
@@ -213,13 +213,13 @@ class RoiMatching():
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
                     self.embs2 = self._roi_proto(self.img2,self.masks2)
                     time_3 = time.time()
-                    print(f"Inference Time 3: {time_3 - start_time:.3f} seconds")
+                    print(f"Inference Time 3: {time_3 - time_2:.3f} seconds")
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
                     time_4 = time.time()
-                    print(f"Inference Time 4: {time_4 - start_time:.3f} seconds")
+                    print(f"Inference Time 4: {time_4 - time_3:.3f} seconds")
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2,self.sim_criteria)
                     time_5 = time.time()
-                    print(f"Inference Time 5: {time_5 - start_time:.3f} seconds")
+                    print(f"Inference Time 5: {time_5 - time_4:.3f} seconds")
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
