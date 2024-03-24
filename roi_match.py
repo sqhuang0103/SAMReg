@@ -193,12 +193,12 @@ class RoiMatching():
         # return masks1_new, masks2_new
 
     def get_paired_roi(self):
-        batched_imgs = [self.img1, self.img2]
-        batched_outputs = self._sam_everything(batched_imgs)
-        self.masks1, self.masks2 = batched_outputs[0], batched_outputs[1]
+        # batched_imgs = [self.img1, self.img2]
+        # batched_outputs = self._sam_everything(batched_imgs)
+        # self.masks1, self.masks2 = batched_outputs[0], batched_outputs[1]
 
-        # self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
-        # self.masks2 = self._sam_everything(self.img2)
+        self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
+        self.masks2 = self._sam_everything(self.img2)
 
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
