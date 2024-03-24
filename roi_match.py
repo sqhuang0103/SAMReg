@@ -34,6 +34,7 @@ import cv2
 import torch
 from torch.nn.functional import cosine_similarity
 from utils import Metric, Vis, Vis_cv2
+import time
 
 
 class RoiMatching():
@@ -195,10 +196,10 @@ class RoiMatching():
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._sam_everything(batched_imgs)
         self.masks1, self.masks2 = batched_outputs[0], batched_outputs[1]
-        import pdb
-        pdb.set_trace()
-        self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
-        self.masks2 = self._sam_everything(self.img2)
+
+        # self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
+        # self.masks2 = self._sam_everything(self.img2)
+
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
 
@@ -286,8 +287,12 @@ im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("R
 im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:0'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+start_time = time.time()
 RM = RoiMatching(im1,im2,device,url=url)
 RM.get_paired_roi()
+end_time = time.time()
+inference_time = end_time - start_time
+print(f"Inference Time: {inference_time:.3f} seconds")
 visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
