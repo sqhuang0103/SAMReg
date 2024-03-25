@@ -224,8 +224,9 @@ class RoiMatching():
         # point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         point = np.array([[383,543]])
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
-        m, s = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
+        masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
+        mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:]
         return m,s, point
 
 
