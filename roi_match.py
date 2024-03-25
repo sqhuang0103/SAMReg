@@ -368,14 +368,13 @@ def visualize_masks_with_scores(image, masks, scores):
         ax = axs[i]
         score = scores_np[i]
         mask = masks_np[i]
-        mask_rgb = np.zeros((mask.shape[1], mask.shape[2], 3), dtype=np.uint8)
-        mask_rgb[mask[0, :, :] > 0] = [255, 0, 0]  # Red color for the mask
-
-        combined = image_np.copy()
-        combined[mask[0, :, :] > 0] = combined[mask[0, :, :] > 0] * 0.5 + mask_rgb[mask[0, :, :] > 0] * 0.5
-
-        ax.imshow(combined)
-        ax.set_title(f'Score: {score:.4f}')
+        # Create an RGBA image for the mask
+        mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
+        mask_image[..., 3] = mask * 255  # Alpha channel
+        # Overlay the mask on the image
+        ax.imshow(image_np)
+        ax.imshow(mask_image, cmap='jet', alpha=0.5)
+        # ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
     plt.tight_layout()
     plt.show()
