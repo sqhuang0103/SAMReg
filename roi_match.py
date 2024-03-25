@@ -375,7 +375,7 @@ def visualize_masks_with_scores(image, masks, scores):
         # Overlay the mask on the image
         ax.imshow(image_np)
         ax.imshow(mask_image, cmap='jet', alpha=0.5)
-        # ax.set_title(f'Score: {score:.4f}')
+        ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
     plt.tight_layout()
     plt.show()
@@ -395,7 +395,7 @@ m,s = RM.get_prompt_roi()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
-visualize_masks_with_scores(im1,m[0],s)
+visualize_masks_with_scores(im1,m[0],s[0])
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
