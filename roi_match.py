@@ -363,6 +363,7 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
     scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
     pos_points = points[labels == 1]
     neg_points = points[labels == 0]
+    print(pos_points)
 
     # Set up the plot
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
