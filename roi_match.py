@@ -195,31 +195,21 @@ class RoiMatching():
     def get_paired_roi(self):
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._sam_everything(batched_imgs)
-        self.masks1, self.masks2 = batched_outputs[0], batched_outputs[1]
-        time_1 = time.time()
-        print(f"Inference Time 1: {time_1-start_time:.3f} seconds")
+        self.masks1, self.masks2 = batched_outputs[0], batched_outputs[1] # 16.554s
 
         # self.masks1 = self._sam_everything(self.img1)  # len(RM.masks1) 2; RM.masks1[0] dict; RM.masks1[0]['masks'] list
         # self.masks2 = self._sam_everything(self.img2)
 
         self.masks1 = self._mask_criteria(self.masks1['masks'], v_min=self.v_min, v_max=self.v_max)
         self.masks2 = self._mask_criteria(self.masks2['masks'], v_min=self.v_min, v_max=self.v_max)
-        time_2 = time.time()
-        print(f"Inference Time 2: {time_2 - time_1:.3f} seconds")
 
         match self.mode:
             case 'embedding':
                 if len(self.masks1) > 0 and len(self.masks2) > 0:
                     self.embs1 = self._roi_proto(self.img1,self.masks1) #device:cuda1
-                    self.embs2 = self._roi_proto(self.img2,self.masks2)
-                    time_3 = time.time()
-                    print(f"Inference Time 3: {time_3 - time_2:.3f} seconds")
+                    self.embs2 = self._roi_proto(self.img2,self.masks2) # 6.752s
                     self.sim_matrix = self._similarity_matrix(self.embs1, self.embs2)
-                    time_4 = time.time()
-                    print(f"Inference Time 4: {time_4 - time_3:.3f} seconds")
                     self.masks1, self.masks2 = self._roi_match(self.sim_matrix,self.masks1,self.masks2,self.sim_criteria)
-                    time_5 = time.time()
-                    print(f"Inference Time 5: {time_5 - time_4:.3f} seconds")
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
@@ -293,8 +283,8 @@ def visualize_masks(image1, masks1, image2, masks2):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
 device='cuda:0'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 start_time = time.time()
