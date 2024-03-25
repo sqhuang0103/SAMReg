@@ -395,6 +395,7 @@ RM = RoiMatching(im1,im2,device,url=url)
 # transformers SAM implementation
 # RM.get_paired_roi()
 m,s, p = RM.get_prompt_roi()
+print(p)
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
