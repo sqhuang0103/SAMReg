@@ -361,6 +361,7 @@ def visualize_masks_with_scores(image, masks, scores):
     # Move masks and scores to CPU and convert to NumPy
     masks_np = masks.cpu().numpy().squeeze(0)  # Shape [3, H, W]
     scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
+    print(scores_np)
 
     # Set up the plot
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
