@@ -225,7 +225,7 @@ class RoiMatching():
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         m, s = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
-        return m,s, point[0]
+        return m,s, point
 
 
 
@@ -346,7 +346,7 @@ def visualize_masks(image1, masks1, image2, masks2):
     return result1, result2
 
 
-def visualize_masks_with_scores(image, masks, scores, points):
+def visualize_masks_with_scores(image, masks, scores, points, labels):
     """
     Visualize masks with their scores on the original image.
 
@@ -361,7 +361,8 @@ def visualize_masks_with_scores(image, masks, scores, points):
     # Move masks and scores to CPU and convert to NumPy
     masks_np = masks.cpu().numpy().squeeze(0)  # Shape [3, H, W]
     scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
-    print(scores_np)
+    pos_points = points[labels == 1]
+    neg_points = points[labels == 0]
 
     # Set up the plot
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
@@ -375,7 +376,7 @@ def visualize_masks_with_scores(image, masks, scores, points):
         # Overlay the mask on the image
         ax.imshow(image_np)
         ax.imshow(mask_image, cmap='jet', alpha=0.5)
-        ax.scatter(points[:, 0], points[:, 1], color='green', marker='*', s=375, edgecolor='white',
+        ax.scatter(pos_points[:, 0], pos_points[:, 1], color='green', marker='*', s=375, edgecolor='white',
                    linewidth=1.25)
         ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
@@ -397,7 +398,7 @@ m,s, p = RM.get_prompt_roi()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
-visualize_masks_with_scores(im1,m[0],s[0], p)
+visualize_masks_with_scores(im1,m[0],s[0], p, labels=[1])
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
@@ -416,8 +417,8 @@ visualize_masks_with_scores(im1,m[0],s[0], p)
 # visualized_image1, visualized_image2 = visualize_masks(im1, masks1, im2, masks2)
 
 
-cv2.imshow("Visualized Image 1", visualized_image1)
-cv2.imshow("Visualized Image 2", visualized_image2)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.imshow("Visualized Image 1", visualized_image1)
+# cv2.imshow("Visualized Image 2", visualized_image2)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
