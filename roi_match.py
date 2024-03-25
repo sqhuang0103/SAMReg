@@ -218,8 +218,8 @@ class RoiMatching():
         self.processor = SamProcessor.from_pretrained(self.url)
         import pdb
         pdb.set_trace()
-        shape = (H,W) = (self.img1.size()[0], self.img1.size()[1])
-        point = self._get_random_coordinates(shape,1)
+        H,W = self.img1.size()
+        point = self._get_random_coordinates((H,W),1)
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._get_image_embedding(batched_imgs)
         self.emb1, self.emb2 = batched_outputs[0], batched_outputs[1]
