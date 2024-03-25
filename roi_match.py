@@ -219,11 +219,11 @@ class RoiMatching():
         import pdb
         pdb.set_trace()
         H,W = self.img1.size
-        point = self._get_random_coordinates((H,W),1)
+        point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._get_image_embedding(batched_imgs)
-        self.emb1, self.emb2 = batched_outputs[0], batched_outputs[1]
-        _, _ = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
+        self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
+        m, s = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
 
 
 
