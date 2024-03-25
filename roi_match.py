@@ -361,9 +361,6 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
     # Move masks and scores to CPU and convert to NumPy
     masks_np = masks.cpu().numpy().squeeze(0)  # Shape [3, H, W]
     scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
-    pos_points = points[labels == 1]
-    neg_points = points[labels == 0]
-    print(pos_points)
 
     # Set up the plot
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
@@ -377,8 +374,7 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
         # Overlay the mask on the image
         ax.imshow(image_np)
         ax.imshow(mask_image, cmap='jet', alpha=0.5)
-        ax.scatter(pos_points[:, 0], pos_points[:, 1], color='green', marker='*', s=375, edgecolor='white',
-                   linewidth=1.25)
+        ax.scatter(points[:, 0], points[:, 1], c='red', marker='o', label='Scatter Points')
         ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
     plt.tight_layout()
