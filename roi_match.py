@@ -217,10 +217,11 @@ class RoiMatching():
     def get_prompt_roi(self):
         self.model = SamModel.from_pretrained(self.url).to(self.device)  # "facebook/sam-vit-huge" "wanglab/medsam-vit-base"
         self.processor = SamProcessor.from_pretrained(self.url)
-        H,W = self.img1.size
-        point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._get_image_embedding(batched_imgs)
+
+        H,W = self.img1.size
+        point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         m, s = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
