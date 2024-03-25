@@ -227,7 +227,8 @@ class RoiMatching():
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:]
-        return m,s, point
+
+        return masks_f, scores_f, point
 
 
 
