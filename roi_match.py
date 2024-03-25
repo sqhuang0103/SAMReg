@@ -35,6 +35,7 @@ import torch
 from torch.nn.functional import cosine_similarity
 from utils import Metric, Vis, Vis_cv2
 import time
+import matplotlib.pyplot as plt
 
 
 class RoiMatching():
@@ -216,14 +217,14 @@ class RoiMatching():
     def get_prompt_roi(self):
         self.model = SamModel.from_pretrained(self.url).to(self.device)  # "facebook/sam-vit-huge" "wanglab/medsam-vit-base"
         self.processor = SamProcessor.from_pretrained(self.url)
-        import pdb
-        pdb.set_trace()
         H,W = self.img1.size
         point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         batched_imgs = [self.img1, self.img2]
         batched_outputs = self._get_image_embedding(batched_imgs)
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         m, s = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
+        # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
+        return m,s
 
 
 
@@ -344,6 +345,40 @@ def visualize_masks(image1, masks1, image2, masks2):
     return result1, result2
 
 
+def visualize_masks_with_scores(image, masks, scores):
+    """
+    Visualize masks with their scores on the original image.
+
+    Parameters:
+    - image: PIL image with size (H, W)
+    - masks: torch tensor of shape [1, 3, H, W]
+    - scores: torch tensor of scores with shape [1, 3]
+    """
+    # Convert PIL image to NumPy array
+    image_np = np.array(image)
+
+    # Move masks and scores to CPU and convert to NumPy
+    masks_np = masks.cpu().numpy().squeeze(0)  # Shape [3, H, W]
+    scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
+
+    # Set up the plot
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    for i in range(3):
+        ax = axs[i]
+        score = scores_np[i]
+        mask = masks_np[i]
+        # Create an RGBA image for the mask
+        mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
+        mask_image[..., 3] = mask * 255  # Alpha channel
+        # Overlay the mask on the image
+        ax.imshow(image_np)
+        ax.imshow(mask_image, cmap='jet', alpha=0.5)
+        ax.set_title(f'Score: {score:.4f}')
+        ax.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+
 
 im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
@@ -354,10 +389,11 @@ RM = RoiMatching(im1,im2,device,url=url)
 
 # transformers SAM implementation
 # RM.get_paired_roi()
-RM.get_prompt_roi()
+m,s = RM.get_prompt_roi()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
+visualize_masks_with_scores(im1,m[0],s)
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
