@@ -213,11 +213,73 @@ class RoiMatching():
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
-    # def get_prompt_roi(self):
+    def get_prompt_roi(self):
+        self.model = SamModel.from_pretrained(self.url).to(self.device)  # "facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+        self.processor = SamProcessor.from_pretrained(self.url)
+        import pdb
+        pdb.set_trace()
+        shape = (H,W) = (self.img1.size()[0], self.img1.size()[1])
+        point = self._get_random_coordinates(shape,1)
+        batched_imgs = [self.img1, self.img2]
+        batched_outputs = self._get_image_embedding(batched_imgs)
+        self.emb1, self.emb2 = batched_outputs[0], batched_outputs[1]
+        _, _ = self._get_prompt_mask(self.img1, self.emb1, input_points=[point], labels=[1])
 
 
 
+    def _get_random_coordinates(self, shape, n_points, mask=None):
+        """
+        Generate random coordinates within a given shape. If a mask is provided,
+        the points are generated within the non-zero regions of the mask.
 
+        Parameters:
+        - shape: tuple of (H, W), the dimensions of the space where points are generated.
+        - n_points: int, the number of points to generate.
+        - mask: ndarray or None, the mask within which to generate points, or None to ignore.
+
+        Returns:
+        - coordinates: ndarray of shape (n_points, 2), each row is a coordinate (y, x).
+        """
+        H, W = shape
+        if mask is None:
+            # Generate random coordinates over the entire shape
+            coordinates = np.column_stack((np.random.randint(0, H, n_points),
+                                           np.random.randint(0, W, n_points)))
+        else:
+            # Find indices where mask is greater than 0
+            y_indices, x_indices = np.where(mask > 0)
+            if len(y_indices) < n_points:
+                raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
+
+            # Randomly choose n_points indices from the non-zero regions of the mask
+            chosen_indices = np.random.choice(len(y_indices), n_points, replace=False)
+            coordinates = np.column_stack((y_indices[chosen_indices], x_indices[chosen_indices]))
+
+        return coordinates
+
+    def _get_image_embedding(self, image):
+        inputs = self.processor(image, return_tensors="pt").to(self.device)
+        # # pixel_values" torch.size(1,3,1024,1024); "original_size" tensor([[834,834]]); 'reshaped_input_sizes' tensor([[1024, 1024]])
+        image_embeddings = self.model.get_image_embeddings(inputs["pixel_values"])
+        return image_embeddings
+
+    def _get_prompt_mask(self, image, image_embeddings, input_points, labels, input_boxes=None):
+        if input_boxes is not None:
+            inputs = self.processor(image, input_boxes=[input_boxes], input_points=[input_points], input_labels=[labels],
+                               return_tensors="pt").to(device)
+        else:
+            inputs = self.processor(image, input_points=[input_points], input_labels=[labels],
+                                    return_tensors="pt").to(device)
+
+        inputs.pop("pixel_values", None)
+        inputs.update({"image_embeddings": image_embeddings})
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+
+        masks = self.processor.image_processor.post_process_masks(outputs.pred_masks.cpu(), inputs["original_sizes"].cpu(),
+                                                             inputs["reshaped_input_sizes"].cpu())
+        scores = outputs.iou_scores
+        return masks, scores
 
 
 def visualize_masks(image1, masks1, image2, masks2):
@@ -289,12 +351,15 @@ device='cuda:0'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 start_time = time.time()
 RM = RoiMatching(im1,im2,device,url=url)
+
+# transformers SAM implementation
 RM.get_paired_roi()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
 visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
+# SAM repo implementation
 # im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
 # im2 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image2.png")
 # from model.segment_anything import sam_model_registry, SamPredictor
