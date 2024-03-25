@@ -353,11 +353,12 @@ start_time = time.time()
 RM = RoiMatching(im1,im2,device,url=url)
 
 # transformers SAM implementation
-RM.get_paired_roi()
+# RM.get_paired_roi()
+RM.get_prompt_roi()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
-visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
+# visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
 # im1 = cv2.imread("/home/shiqi/SAMReg/example/prostate_2d/image1.png")
