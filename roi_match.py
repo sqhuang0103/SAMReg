@@ -36,6 +36,7 @@ from torch.nn.functional import cosine_similarity
 from utils import Metric, Vis, Vis_cv2
 import time
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 
 
 class RoiMatching():
@@ -229,8 +230,8 @@ class RoiMatching():
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
         import pdb
         pdb.set_trace()
-        n_coords = self._get_random_coordinates((H,W),2, mask=mask_f)
-        n_coords = np.vstack(n_coords,prompt_point)
+        n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
+        n_coords = np.concatenate((n_coords,prompt_point), axis=0)
 
         return masks_f, scores_f, n_coords
 
@@ -263,13 +264,13 @@ class RoiMatching():
             # # Randomly choose n_points indices from the non-zero regions of the mask
             # chosen_indices = np.random.choice(len(y_indices), n_points, replace=False)
             # coordinates = np.column_stack((y_indices[chosen_indices], x_indices[chosen_indices]))
+            # 找到 mask 中非零元素的坐标
             nonzero_indices = np.transpose(np.nonzero(mask))
 
-            # Check if there are enough non-zero points
+            # 检查是否有足够的非零点
             if len(nonzero_indices) < n_points:
                 raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
 
-            # Randomly choose n_points indices from the non-zero regions of the mask
             chosen_indices = np.random.choice(len(nonzero_indices), n_points, replace=False)
             coordinates = nonzero_indices[chosen_indices]
 
@@ -298,6 +299,33 @@ class RoiMatching():
                                                              inputs["reshaped_input_sizes"].cpu())
         scores = outputs.iou_scores
         return masks, scores
+
+    def _generate_foreground_mask(self, prototype, image_embedding, threshold=0.5):
+        """
+        Generate foreground mask based on cosine similarity between prototype and image embedding.
+
+        Parameters:
+        - prototype: torch tensor of shape [1, 256]
+        - image_embedding: torch tensor of shape [1, 256, 64, 64]
+        - threshold: threshold value for foreground mask
+
+        Returns:
+        - mask: torch tensor of shape [64, 64] representing the foreground mask
+        """
+        # Flatten the image embedding
+        image_embedding_flat = image_embedding.view(256, -1)
+
+        # Compute cosine similarity between prototype and image embedding
+        similarity = F.cosine_similarity(prototype, image_embedding_flat, dim=0)
+
+        # Reshape similarity to match the spatial dimensions of the image
+        similarity_map = similarity.view(64, 64)
+
+        # Generate foreground mask based on threshold
+        mask = torch.where(similarity_map >= threshold, torch.ones_like(similarity_map),
+                           torch.zeros_like(similarity_map))
+
+        return mask
 
 
 def visualize_masks(image1, masks1, image2, masks2):
