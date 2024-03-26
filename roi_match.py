@@ -492,7 +492,7 @@ def visualize_masks_with_sim(image, masks):
         mask = masks_np[i]
         # Create an RGBA image for the mask
         mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
-        mask_image[mask] = [255, 0, 0, 255]
+        mask_image[mask>0] = [255, 0, 0, 255]
 
         # mask_image[..., 3] = mask * 255  # Alpha channel
         # Overlay the mask on the image
