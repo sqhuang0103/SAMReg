@@ -278,7 +278,7 @@ class RoiMatching():
             inputs = self.processor(image, input_boxes=[input_boxes], input_points=[input_points], input_labels=[labels],
                                return_tensors="pt").to(device)
         else:
-            inputs = self.processor(image, input_points=[input_points], input_labels=[labels],
+            inputs = self.processor(image, input_points=[input_points],
                                     return_tensors="pt").to(device)
 
         inputs.pop("pixel_values", None)
