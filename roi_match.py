@@ -225,7 +225,7 @@ class RoiMatching():
         self.fix_rois, self.fix_protos = [],[]
         # point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         prompt_point = torch.tensor([[383,543]])
-        prompt_point = torch.tensor([[100,100]])
+        prompt_point = torch.tensor([[78,123]])
 
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1])
