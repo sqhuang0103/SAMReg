@@ -255,6 +255,7 @@ class RoiMatching():
 
         for mask in masks:
             num_true_pixels = torch.sum(mask).item()
+            print(num_true_pixels)
             if num_true_pixels in grouped_masks:
                 continue
             grouped_masks[num_true_pixels] = mask
@@ -349,10 +350,10 @@ class RoiMatching():
         image_embedding_flat = image_embedding.view(256, -1)
 
         # Compute cosine similarity between prototype and image embedding
-        similarity = F.cosine_similarity(prototype, image_embedding_flat, dim=0)
+        similarity_map = F.cosine_similarity(prototype.expand_as(image_embedding_flat), image_embedding_flat, dim=0)
 
         # Reshape similarity to match the spatial dimensions of the image
-        similarity_map = similarity.view(64, 64)
+        similarity_map = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
 
         # Generate foreground mask based on threshold
         mask = torch.where(similarity_map >= threshold, torch.ones_like(similarity_map),
