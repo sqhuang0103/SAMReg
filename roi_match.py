@@ -244,7 +244,7 @@ class RoiMatching():
             mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.8)
             mov_roi = mov_roi.float()
             mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
-            mov_roi = (mov_roi > 0.5).to(torch.bool)
+            mov_roi = (mov_roi > 0).to(torch.bool)
             mov_roi = mov_roi.squeeze()
             self.mov_rois.append(mov_roi)
 
