@@ -238,8 +238,13 @@ class RoiMatching():
         self.fix_rois = self._remove_duplicate_masks(self.fix_rois)
         for _m in self.fix_rois:
             self.fix_protos.append(self._get_proto(self.emb1,_m))
+
         import pdb
         pdb.set_trace()
+
+        for _p in self.fix_protos:
+            mov_rois = self._generate_foreground_mask(_p,self.emb2,threshold=0.5)
+
 
 
 
@@ -258,7 +263,7 @@ class RoiMatching():
         return unique_masks
 
     def _get_proto(self,_emb,_m):
-        tmp_m = _m.astype(np.uint8)
+        tmp_m = torch.tensor(_m, dtype=torch.uint8)
         tmp_m = cv2.resize(tmp_m, (64, 64), interpolation=cv2.INTER_NEAREST)
         tmp_m = torch.tensor(tmp_m.astype(bool), device=self.device,
                              dtype=torch.float32)  # Convert to tensor and send to CUDA
