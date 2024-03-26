@@ -255,7 +255,7 @@ class RoiMatching():
 
 
 
-        return masks_f, scores_f, n_coords
+        return masks_f, scores_f, n_coords, self.mov_rois
 
     def _remove_duplicate_masks(self,masks):
         grouped_masks = {}
@@ -470,6 +470,39 @@ def visualize_masks_with_scores(image, masks, scores, points):
     plt.tight_layout()
     plt.show()
 
+def visualize_masks_with_sim(image, masks):
+    """
+    Visualize masks with their scores on the original image.
+
+    Parameters:
+    - image: PIL image with size (H, W)
+    - masks: torch tensor of shape [1, 3, H, W]
+    - scores: torch tensor of scores with shape [1, 3]
+    """
+    # Convert PIL image to NumPy array
+    image_np = np.array(image)
+
+    # Move masks and scores to CPU and convert to NumPy
+
+    masks = [m.cpu().numpy() for m in masks]  # Shape [3, H, W]
+    masks = [m.astype('uint8') for m in masks]
+    masks_np = np.array(masks)
+
+    # Set up the plot
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    for i in range(3):
+        ax = axs[i]
+        mask = masks_np[i]
+        # Create an RGBA image for the mask
+        mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
+        mask_image[..., 3] = mask * 255  # Alpha channel
+        # Overlay the mask on the image
+        ax.imshow(image_np)
+        ax.imshow(mask_image, cmap='jet', alpha=0.5)
+        ax.axis('off')
+    plt.tight_layout()
+    plt.show()
+
 
 
 
@@ -483,12 +516,13 @@ RM = RoiMatching(im1,im2,device,url=url)
 
 # transformers SAM implementation
 # RM.get_paired_roi()
-m,s, p = RM.get_prompt_roi()
+m,s, p, mov_masks = RM.get_prompt_roi()
 print(p)
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
 visualize_masks_with_scores(im1,m[0],s[0], p, labels=[1])
+visualize_masks_with_sim(im2, mov_masks)
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
