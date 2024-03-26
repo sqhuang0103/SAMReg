@@ -235,8 +235,6 @@ class RoiMatching():
 
         return masks_f, scores_f, n_coords
 
-
-
     def _get_random_coordinates(self, shape, n_points, mask=None):
         """
         Generate random coordinates within a given shape. If a mask is provided,
@@ -245,33 +243,26 @@ class RoiMatching():
         Parameters:
         - shape: tuple of (H, W), the dimensions of the space where points are generated.
         - n_points: int, the number of points to generate.
-        - mask: ndarray or None, the mask within which to generate points, or None to ignore.
+        - mask: torch tensor or None, the mask within which to generate points, or None to ignore.
 
         Returns:
-        - coordinates: ndarray of shape (n_points, 2), each row is a coordinate (y, x).
+        - coordinates: torch tensor of shape (n_points, 2), each row is a coordinate (y, x).
         """
         H, W = shape
         if mask is None:
-            # Generate random coordinates over the entire shape
-            coordinates = np.column_stack((np.random.randint(0, H, n_points),
-                                           np.random.randint(0, W, n_points)))
+            # 在整个形状范围内生成随机坐标
+            coordinates = torch.stack([torch.randint(0, H, (n_points,)),
+                                       torch.randint(0, W, (n_points,))], dim=1)
         else:
-            # # Find indices where mask is greater than 0
-            # y_indices, x_indices = np.where(mask > 0)
-            # if len(y_indices) < n_points:
-            #     raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
-            #
-            # # Randomly choose n_points indices from the non-zero regions of the mask
-            # chosen_indices = np.random.choice(len(y_indices), n_points, replace=False)
-            # coordinates = np.column_stack((y_indices[chosen_indices], x_indices[chosen_indices]))
             # 找到 mask 中非零元素的坐标
-            nonzero_indices = np.transpose(np.nonzero(mask))
+            nonzero_indices = torch.nonzero(mask)
 
             # 检查是否有足够的非零点
             if len(nonzero_indices) < n_points:
-                raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
+                raise ValueError("在 mask 中没有足够的点来生成所请求的坐标数量。")
 
-            chosen_indices = np.random.choice(len(nonzero_indices), n_points, replace=False)
+            # 从 mask 的非零区域随机选择 n_points 个索引
+            chosen_indices = torch.randperm(nonzero_indices.size(0))[:n_points]
             coordinates = nonzero_indices[chosen_indices]
 
         return coordinates
