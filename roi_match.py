@@ -346,11 +346,14 @@ class RoiMatching():
         Returns:
         - mask: torch tensor of shape [64, 64] representing the foreground mask
         """
+        # Transpose prototype to match the dimensions of image_embedding_flat
+        prototype = prototype.transpose(0, 1)  # Shape: [256, 1]
+
         # Flatten the image embedding
-        image_embedding_flat = image_embedding.view(256, -1)
+        image_embedding_flat = image_embedding.view(256, -1)  # Shape: [256, 64*64]
 
         # Expand prototype to match the size of image_embedding_flat
-        prototype_expanded = prototype.expand_as(image_embedding_flat)
+        prototype_expanded = prototype.expand(-1, image_embedding_flat.size(1))  # Shape: [256, 64*64]
 
         # Compute cosine similarity between prototype and image embedding
         similarity_map = F.cosine_similarity(prototype_expanded, image_embedding_flat, dim=0)
