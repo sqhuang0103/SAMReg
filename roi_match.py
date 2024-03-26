@@ -263,7 +263,7 @@ class RoiMatching():
         return unique_masks
 
     def _get_proto(self,_emb,_m):
-        tmp_m = torch.tensor(_m, dtype=torch.uint8)
+        tmp_m = torch.tensor(_m, device=self.device, dtype=torch.uint8)
         tmp_m = F.interpolate(tmp_m.unsqueeze(0).unsqueeze(0), size=(64, 64), mode='nearest').squeeze()
         # tmp_m = torch.tensor(tmp_m, device=self.device,
         #                      dtype=torch.float32)  # Convert to tensor and send to CUDA
