@@ -231,7 +231,7 @@ class RoiMatching():
         import pdb
         pdb.set_trace()
         n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
-        n_coords = torch.concatenate((n_coords,prompt_point), axis=0)
+        n_coords = torch.cat((n_coords,prompt_point), dim=0)
 
         return masks_f, scores_f, n_coords
 
