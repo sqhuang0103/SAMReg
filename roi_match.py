@@ -222,7 +222,7 @@ class RoiMatching():
         batched_outputs = self._get_image_embedding(batched_imgs)
 
         H,W = self.img1.size
-        self.fix_rois = []
+        self.fix_rois, self.fix_protos = [],[]
         # point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         prompt_point = torch.tensor([[383,543]])
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
@@ -234,13 +234,28 @@ class RoiMatching():
         self.n_coords = torch.cat((prompt_point,n_coords), dim=0)
         for _c in n_coords:
             masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[[_c]], labels=[1])
-            self.fix_rois.append(masks_f[0][0,torch.argmax(scores_f[0][0]),:,:])
+            self.fix_rois.append(masks_f[0][0,torch.argmax(scores_f[0][0]),:,:]) #torch.tensor(836,836)
+        self.fix_rois = self._remove_duplicate_masks(self.fix_rois)
+        for _m in self.fix_rois:
+            self.fix_protos.append(self._get_proto(self.emb1,_m))
         import pdb
         pdb.set_trace()
 
 
 
         return masks_f, scores_f, n_coords
+
+    def _remove_duplicate_masks(self,masks):
+        grouped_masks = {}
+
+        for mask in masks:
+            num_true_pixels = torch.sum(mask).item()
+            if num_true_pixels in grouped_masks:
+                continue
+            grouped_masks[num_true_pixels] = mask
+
+        unique_masks = list(grouped_masks.values())
+        return unique_masks
 
     def _get_proto(self,_emb,_m):
         tmp_m = _m.astype(np.uint8)
