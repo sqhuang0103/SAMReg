@@ -278,7 +278,7 @@ class RoiMatching():
             inputs = self.processor(image, input_boxes=[input_boxes], input_points=[input_points], input_labels=[labels],
                                return_tensors="pt").to(device)
         else:
-            inputs = self.processor(image, input_points=[input_points],
+            inputs = self.processor(image, input_points=[input_points], input_labels=[labels],
                                     return_tensors="pt").to(device)
 
         inputs.pop("pixel_values", None)
@@ -408,7 +408,7 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
         mask_image[..., 3] = mask * 255  # Alpha channel
         # Overlay the mask on the image
         ax.imshow(image_np)
-        ax.imshow(mask_image, cmap='jet', alpha=0.5)
+        ax.imshow(mask_image, cmap='hot', alpha=0.5)
         ax.scatter(points[:, 0], points[:, 1], c='red', marker='o', label='Scatter Points')
         ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
