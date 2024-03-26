@@ -264,6 +264,8 @@ class RoiMatching():
             # 从 mask 的非零区域随机选择 n_points 个索引
             chosen_indices = torch.randperm(nonzero_indices.size(0))[:n_points]
             coordinates = nonzero_indices[chosen_indices]
+            coordinates = coordinates[:, [1, 0]]
+
 
         return coordinates
 
@@ -408,7 +410,7 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
         mask_image[..., 3] = mask * 255  # Alpha channel
         # Overlay the mask on the image
         ax.imshow(image_np)
-        ax.imshow(mask_image, cmap='hot', alpha=0.5)
+        ax.imshow(mask_image, cmap='jet', alpha=0.5)
         ax.scatter(points[:, 0], points[:, 1], c='red', marker='o', label='Scatter Points')
         ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
