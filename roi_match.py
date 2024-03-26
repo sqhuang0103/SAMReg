@@ -504,7 +504,7 @@ def visualize_masks_with_sim(image, masks):
 im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
 device='cuda:0'
-url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
+url="wanglab/medsam-vit-base" #"facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 start_time = time.time()
 RM = RoiMatching(im1,im2,device,url=url)
 
