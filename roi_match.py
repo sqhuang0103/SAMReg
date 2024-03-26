@@ -264,7 +264,7 @@ class RoiMatching():
 
     def _get_proto(self,_emb,_m):
         tmp_m = torch.tensor(_m, dtype=torch.uint8)
-        tmp_m = F.interpolate(tmp_m.unsqueeze(0).unsqueeze(0), size=(64, 64), mode='nearest').squeeze()
+        tmp_m = F.interpolate(tmp_m, size=(64, 64), mode='nearest').squeeze()
         tmp_m = torch.tensor(tmp_m.astype(bool), device=self.device,
                              dtype=torch.float32)  # Convert to tensor and send to CUDA
         tmp_m = tmp_m.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions to match emb1
