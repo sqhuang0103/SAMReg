@@ -349,15 +349,17 @@ class RoiMatching():
         # Flatten the image embedding
         image_embedding_flat = image_embedding.view(256, -1)
 
+        # Expand prototype to match the size of image_embedding_flat
+        prototype_expanded = prototype.expand_as(image_embedding_flat)
+
         # Compute cosine similarity between prototype and image embedding
-        similarity_map = F.cosine_similarity(prototype.expand_as(image_embedding_flat), image_embedding_flat, dim=0)
+        similarity_map = F.cosine_similarity(prototype_expanded, image_embedding_flat, dim=0)
 
         # Reshape similarity to match the spatial dimensions of the image
-        similarity_map = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
+        mask = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
 
         # Generate foreground mask based on threshold
-        mask = torch.where(similarity_map >= threshold, torch.ones_like(similarity_map),
-                           torch.zeros_like(similarity_map))
+        mask = torch.where(mask >= threshold, torch.ones_like(mask), torch.zeros_like(mask))
 
         return mask
 
