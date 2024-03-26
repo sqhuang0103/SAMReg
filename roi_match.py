@@ -521,7 +521,7 @@ print(p)
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
-# visualize_masks_with_scores(im1,m[0],s[0], p, labels=[1])
+visualize_masks_with_scores(im1,m[0],s[0], p)
 visualize_masks_with_sim(im2, mov_masks)
 plt.show()
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
