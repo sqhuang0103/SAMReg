@@ -468,7 +468,7 @@ def visualize_masks_with_scores(image, masks, scores, points):
         ax.set_title(f'Score: {score:.4f}')
         ax.axis('off')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 def visualize_masks_with_sim(image, masks):
     """
@@ -501,7 +501,7 @@ def visualize_masks_with_sim(image, masks):
         ax.imshow(mask_image, cmap='jet', alpha=0.5)
         ax.axis('off')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
 
@@ -523,6 +523,7 @@ inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
 visualize_masks_with_scores(im1,m[0],s[0], p, labels=[1])
 visualize_masks_with_sim(im2, mov_masks)
+plt.show()
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
 
 # SAM repo implementation
