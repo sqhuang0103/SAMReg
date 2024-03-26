@@ -241,7 +241,7 @@ class RoiMatching():
 
         self.mov_rois = []
         for _p in self.fix_protos:
-            mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
+            mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.8)
             mov_roi = mov_roi.float()
             mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
             mov_roi = (mov_roi > 0).to(torch.bool)
@@ -301,9 +301,8 @@ class RoiMatching():
             nonzero_indices = torch.nonzero(mask)
 
             if len(nonzero_indices) < n_points:
-                raise ValueError("在 mask 中没有足够的点来生成所请求的坐标数量。")
+                raise ValueError("No enough points.")
 
-            # 从 mask 的非零区域随机选择 n_points 个索引
             chosen_indices = torch.randperm(nonzero_indices.size(0))[:n_points]
             coordinates = nonzero_indices[chosen_indices]
             coordinates = coordinates[:, [1, 0]]
