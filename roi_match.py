@@ -226,7 +226,7 @@ class RoiMatching():
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
-        mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:]
+        mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
         import pdb
         pdb.set_trace()
         n_coords = self._get_random_coordinates((H,W),2, mask=mask_f)
@@ -255,14 +255,23 @@ class RoiMatching():
             coordinates = np.column_stack((np.random.randint(0, H, n_points),
                                            np.random.randint(0, W, n_points)))
         else:
-            # Find indices where mask is greater than 0
-            y_indices, x_indices = np.where(mask > 0)
-            if len(y_indices) < n_points:
+            # # Find indices where mask is greater than 0
+            # y_indices, x_indices = np.where(mask > 0)
+            # if len(y_indices) < n_points:
+            #     raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
+            #
+            # # Randomly choose n_points indices from the non-zero regions of the mask
+            # chosen_indices = np.random.choice(len(y_indices), n_points, replace=False)
+            # coordinates = np.column_stack((y_indices[chosen_indices], x_indices[chosen_indices]))
+            nonzero_indices = np.transpose(np.nonzero(mask))
+
+            # Check if there are enough non-zero points
+            if len(nonzero_indices) < n_points:
                 raise ValueError("Not enough points within the mask to generate the requested number of coordinates.")
 
             # Randomly choose n_points indices from the non-zero regions of the mask
-            chosen_indices = np.random.choice(len(y_indices), n_points, replace=False)
-            coordinates = np.column_stack((y_indices[chosen_indices], x_indices[chosen_indices]))
+            chosen_indices = np.random.choice(len(nonzero_indices), n_points, replace=False)
+            coordinates = nonzero_indices[chosen_indices]
 
         return coordinates
 
