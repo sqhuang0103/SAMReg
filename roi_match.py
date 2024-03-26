@@ -228,6 +228,8 @@ class RoiMatching():
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
+        import pdb
+        pdb.set_trace()
         n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
         n_coords = torch.cat((n_coords,prompt_point), dim=0)
 
