@@ -239,11 +239,18 @@ class RoiMatching():
         for _m in self.fix_rois:
             self.fix_protos.append(self._get_proto(self.emb1,_m))
 
+        self.mov_rois = []
+        for _p in self.fix_protos:
+            mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.5)
+            mov_roi = mov_roi.float()
+            mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
+            mov_roi = (mov_roi > 0.5).to(torch.bool)
+            mov_roi = mov_roi.squeeze()
+            self.mov_rois.append(mov_roi)
+
         import pdb
         pdb.set_trace()
 
-        for _p in self.fix_protos:
-            mov_rois = self._generate_foreground_mask(_p,self.emb2,threshold=0.5)
 
 
 
@@ -429,7 +436,7 @@ def visualize_masks(image1, masks1, image2, masks2):
     return result1, result2
 
 
-def visualize_masks_with_scores(image, masks, scores, points, labels):
+def visualize_masks_with_scores(image, masks, scores, points):
     """
     Visualize masks with their scores on the original image.
 
@@ -462,6 +469,8 @@ def visualize_masks_with_scores(image, masks, scores, points, labels):
         ax.axis('off')
     plt.tight_layout()
     plt.show()
+
+
 
 
 
