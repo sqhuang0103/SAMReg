@@ -222,18 +222,41 @@ class RoiMatching():
         batched_outputs = self._get_image_embedding(batched_imgs)
 
         H,W = self.img1.size
+        self.fix_rois = []
         # point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         prompt_point = torch.tensor([[383,543]])
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
+        self.fix_rois.append(mask_f[0])
+        n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
+        self.n_coords = torch.cat((prompt_point,n_coords), dim=0)
+        for _c in n_coords:
+            masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[[_c]], labels=[1])
+            self.fix_rois.append(masks_f[0][0,torch.argmax(scores_f[0][0]),:,:])
         import pdb
         pdb.set_trace()
-        n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
-        n_coords = torch.cat((n_coords,prompt_point), dim=0)
+
+
 
         return masks_f, scores_f, n_coords
+
+    def _get_proto(self,_emb,_m):
+        tmp_m = _m.astype(np.uint8)
+        tmp_m = cv2.resize(tmp_m, (64, 64), interpolation=cv2.INTER_NEAREST)
+        tmp_m = torch.tensor(tmp_m.astype(bool), device=self.device,
+                             dtype=torch.float32)  # Convert to tensor and send to CUDA
+        tmp_m = tmp_m.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions to match emb1
+
+        # Element-wise multiplication with emb1
+        tmp_emb = _emb * tmp_m
+        # (1,256,64,64)
+
+        tmp_emb[tmp_emb == 0] = torch.nan
+        emb = torch.nanmean(tmp_emb, dim=(2, 3))
+        emb[torch.isnan(emb)] = 0
+        return emb
 
     def _get_random_coordinates(self, shape, n_points, mask=None):
         """
@@ -250,14 +273,11 @@ class RoiMatching():
         """
         H, W = shape
         if mask is None:
-            # 在整个形状范围内生成随机坐标
-            coordinates = torch.stack([torch.randint(0, H, (n_points,)),
-                                       torch.randint(0, W, (n_points,))], dim=1)
+            coordinates = torch.stack([torch.randint(0, W, (n_points,)),
+                                       torch.randint(0, H, (n_points,))], dim=1)
         else:
-            # 找到 mask 中非零元素的坐标
             nonzero_indices = torch.nonzero(mask)
 
-            # 检查是否有足够的非零点
             if len(nonzero_indices) < n_points:
                 raise ValueError("在 mask 中没有足够的点来生成所请求的坐标数量。")
 
