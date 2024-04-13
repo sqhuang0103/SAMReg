@@ -225,10 +225,10 @@ class RoiMatching():
         self.fix_rois, self.fix_protos = [],[]
         # prompt_point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
         # prompt_point = torch.tensor([[383,543]])
-        prompt_point = torch.tensor([[73,43],[68,51]]) #50,160 #10,12 #94,10 #85,120
+        prompt_point = torch.tensor([[68,51]]) #50,160 #10,12 #94,10 #85,120
 
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
-        masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1])
+        masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1 for _ in range(prompt_point.shape[0])])
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
         self.fix_rois.append(mask_f[0])
