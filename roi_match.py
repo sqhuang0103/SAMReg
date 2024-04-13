@@ -484,6 +484,7 @@ def visualize_masks_with_sim(image, masks):
     masks = [m.cpu().numpy() for m in masks]  # Shape [3, H, W]
     masks = [m.astype('uint8') for m in masks]
     masks_np = np.array(masks)
+    print(masks_np.shape)
 
     # Set up the plot
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
