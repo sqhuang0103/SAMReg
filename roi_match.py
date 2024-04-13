@@ -242,17 +242,21 @@ class RoiMatching():
             self.fix_protos.append(self._get_proto(self.emb1,_m))
 
         self.mov_points = []
+        self.mov_rois = []
         for _p in self.fix_protos:
             mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
             mov_roi = mov_roi.float()
             mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
             mov_roi = (mov_roi > 0).to(torch.bool)
-            mov_roi = mov_roi.squeeze()
+            mov_roi = mov_roi.squeeze() # (200,200)
             self.mov_points.append(mov_roi)
             proto_point = self._get_random_coordinates((H,W),5, mask=mov_roi)
+            mov_rois, mov_scores = self._get_prompt_mask(self.img2, self.emb2, input_points=[proto_point], labels=[1 for i in range(proto_point.shape[0])])
+            mov_roi = mov_rois[0][0,torch.argmax(mov_scores[0][0]),:,:]
+            self.mov_rois.append(mov_roi)
 
 
-        return masks_f, scores_f, self.n_coords, self.mov_points
+        return masks_f, scores_f, self.n_coords, self.mov_rois
 
     def _remove_duplicate_masks(self,masks):
         grouped_masks = {}
@@ -520,8 +524,6 @@ RM = RoiMatching(im1,im2,device,url=url)
 # transformers SAM implementation
 # RM.get_paired_roi()
 m,s, p, mov_masks = RM.get_prompt_roi()
-import pdb
-pdb.set_trace()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
