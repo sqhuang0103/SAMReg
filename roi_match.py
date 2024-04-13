@@ -252,7 +252,7 @@ class RoiMatching():
             proto_point = self._get_random_coordinates((H,W),5, mask=mov_roi)
 
 
-        return masks_f, scores_f, self.n_coords, self.mov_rois
+        return masks_f, scores_f, self.n_coords, self.mov_points
 
     def _remove_duplicate_masks(self,masks):
         grouped_masks = {}
