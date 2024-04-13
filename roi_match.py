@@ -484,11 +484,10 @@ def visualize_masks_with_sim(image, masks):
     masks = [m.cpu().numpy() for m in masks]  # Shape [3, H, W]
     masks = [m.astype('uint8') for m in masks]
     masks_np = np.array(masks)
-    print(masks_np.shape)
 
     # Set up the plot
-    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-    for i in range(3):
+    fig, axs = plt.subplots(1, masks_np.shape[0], figsize=(15, 5))
+    for i in range(masks_np.shape[0]):
         ax = axs[i]
         mask = masks_np[i]
         # Create an RGBA image for the mask
