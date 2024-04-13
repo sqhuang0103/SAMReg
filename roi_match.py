@@ -436,7 +436,6 @@ def visualize_masks(image1, masks1, image2, masks2):
 
     return result1, result2
 
-
 def visualize_masks_with_scores(image, masks, scores, points):
     """
     Visualize masks with their scores on the original image.
