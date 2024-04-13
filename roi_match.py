@@ -241,14 +241,15 @@ class RoiMatching():
         for _m in self.fix_rois:
             self.fix_protos.append(self._get_proto(self.emb1,_m))
 
-        self.mov_rois = []
+        self.mov_points = []
         for _p in self.fix_protos:
             mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
             mov_roi = mov_roi.float()
             mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
             mov_roi = (mov_roi > 0).to(torch.bool)
             mov_roi = mov_roi.squeeze()
-            self.mov_rois.append(mov_roi)
+            self.mov_points.append(mov_roi)
+            proto_point = self._get_random_coordinates((H,W),5, mask=mov_roi)
 
 
         return masks_f, scores_f, self.n_coords, self.mov_rois
@@ -258,7 +259,7 @@ class RoiMatching():
 
         for mask in masks:
             num_true_pixels = torch.sum(mask).item()
-            print(num_true_pixels)
+            # print(num_true_pixels)
             if num_true_pixels in grouped_masks:
                 continue
             grouped_masks[num_true_pixels] = mask
@@ -519,7 +520,8 @@ RM = RoiMatching(im1,im2,device,url=url)
 # transformers SAM implementation
 # RM.get_paired_roi()
 m,s, p, mov_masks = RM.get_prompt_roi()
-print(p)
+import pdb
+pdb.set_trace()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
