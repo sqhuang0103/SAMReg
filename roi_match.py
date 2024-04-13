@@ -251,6 +251,7 @@ class RoiMatching():
             mov_roi = mov_roi.squeeze() # (200,200)
             self.mov_points.append(mov_roi)
             proto_point = self._get_random_coordinates((H,W),5, mask=mov_roi)
+            proto_point = proto_point.detach().cpu().numpy()
             mov_rois, mov_scores = self._get_prompt_mask(self.img2, self.emb2, input_points=[proto_point], labels=[1 for i in range(proto_point.shape[0])])
             mov_roi = mov_rois[0][0,torch.argmax(mov_scores[0][0]),:,:]
             self.mov_rois.append(mov_roi)
