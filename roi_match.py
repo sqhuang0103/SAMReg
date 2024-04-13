@@ -364,7 +364,7 @@ class RoiMatching():
         mask = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
 
         # Generate foreground mask based on threshold
-        mask = torch.where(mask >= threshold, torch.ones_like(mask), torch.zeros_like(mask))
+        mask = torch.where(mask >= similarity_map.max(), torch.ones_like(mask), torch.zeros_like(mask))
 
         return mask
 
