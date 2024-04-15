@@ -215,7 +215,7 @@ class RoiMatching():
             case 'overlaping':
                 self._overlap_pair(self.masks1,self.masks2)
 
-    def get_prompt_roi(self):
+    def get_prompt_roi(self,multi_prompt_points=False):
         self.model = SamModel.from_pretrained(self.url).to(self.device)  # "facebook/sam-vit-huge" "wanglab/medsam-vit-base"
         self.processor = SamProcessor.from_pretrained(self.url)
         batched_imgs = [self.img1, self.img2]
@@ -232,12 +232,14 @@ class RoiMatching():
         # m[0].shape: torch.Size([1, 3, 834, 834]); tensor([[[0.9626, 0.9601, 0.7076]]], device='cuda:0')
         mask_f = masks_f[0][:,torch.argmax(scores_f[0][0]),:,:] # torch.Size([1, 834, 834])
         self.fix_rois.append(mask_f[0])
-        n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
-        self.n_coords = torch.cat((prompt_point,n_coords), dim=0)
-        for _c in n_coords:
-            masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[[_c]], labels=[1])
-            self.fix_rois.append(masks_f[0][0,torch.argmax(scores_f[0][0]),:,:]) #torch.tensor(836,836)
-        self.fix_rois = self._remove_duplicate_masks(self.fix_rois)
+        self.n_coords = prompt_point
+        if multi_prompt_points:
+            n_coords = self._get_random_coordinates((H,W),2, mask=mask_f[0])
+            self.n_coords = torch.cat((prompt_point,n_coords), dim=0)
+            for _c in n_coords:
+                masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[[_c]], labels=[1])
+                self.fix_rois.append(masks_f[0][0,torch.argmax(scores_f[0][0]),:,:]) #torch.tensor(836,836)
+            self.fix_rois = self._remove_duplicate_masks(self.fix_rois)
         for _m in self.fix_rois:
             self.fix_protos.append(self._get_proto(self.emb1,_m))
 
