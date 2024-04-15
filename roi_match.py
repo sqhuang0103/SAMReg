@@ -224,8 +224,8 @@ class RoiMatching():
         H,W = self.img1.size
         self.fix_rois, self.fix_protos = [],[]
         # prompt_point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
-        prompt_point = torch.tensor([[353,506]])
-        # prompt_point = torch.tensor([[68,51],[71,36]]) #50,160 #10,12 #94,10 #85,120
+        # prompt_point = torch.tensor([[353,506]])
+        prompt_point = torch.tensor([[85,120]]) #50,160 #10,12 #94,10 # #[68,51],[71,36]
 
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
         masks_f, scores_f = self._get_prompt_mask(self.img1, self.emb1, input_points=[prompt_point], labels=[1 for _ in range(prompt_point.shape[0])])
@@ -515,10 +515,10 @@ def visualize_masks_with_sim(image, masks):
 
 
 
-im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
-im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
-# im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
-# im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
+# im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
+# im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
+im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
+im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:0'
 url="facebook/sam-vit-huge" #"facebook/sam-vit-huge" "wanglab/medsam-vit-base"
 start_time = time.time()
