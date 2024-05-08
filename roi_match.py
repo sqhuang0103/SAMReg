@@ -297,6 +297,8 @@ class RoiMatching():
             mov_gate = cv2.resize(mov_gate, (soft_mov_roi.shape[1], soft_mov_roi.shape[0]))
             fix_gate = soft_fix_roi - fix_gate
             mov_gate = soft_mov_roi - mov_gate
+            fix_gate = np.where(fix_gate>0,fix_gate,0)
+            mov_gate = np.where(mov_gate>0,mov_gate,0)
             ori_soft_mov_roi = cv2.resize(mov_gate, (H, W))
             ori_soft_fix_roi = cv2.resize(fix_gate, (H, W))
 
