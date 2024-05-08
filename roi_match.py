@@ -273,10 +273,38 @@ class RoiMatching():
             mov_roi = mov_rois[0][0,torch.argmax(mov_scores[0][0]),:,:]
             #############################################################################
             # here to visualize
-            import pdb
-            pdb.set_trace()
-            print(masks_f.shape, masks_f.max())
-            print(self.mov_rois.shape, self.mov_rois.max())
+            soft_fix_roi, _fix_roi = self._generate_foreground_mask(_p, self.emb2, threshold=0.9)
+            soft_fix_roi = soft_fix_roi.float()
+            soft_mov_roi = soft_mov_roi.float()
+            soft_mov_roi = soft_mov_roi.cpu().detach().numpy()
+            soft_fix_roi = soft_fix_roi.cpu().detach().numpy()
+            # ori_soft_mov_roi = cv2.resize(soft_mov_roi, (H, W))
+            # ori_soft_fix_roi = cv2.resize(soft_fix_roi, (H, W))
+
+            # print( self.fix_rois[0].shape) #(834,834),True
+            # print(mov_roi.shape) # True
+            fix_gate = self.fix_rois[0].copy()
+            mov_gate = mov_roi.copy()
+            fix_gate = fix_gate.cpu().detach().numpy()
+            mov_gate = mov_gate.cpu().detach().numpy()
+            fix_gate = fix_gate.float()
+            mov_gate = mov_gate.float()
+            fix_gate = 1-fix_gate
+            mov_gate = 1-mov_gate
+            fix_gate *= 0.3
+            mov_gate *= 0.3
+            fix_gate = cv2.resize(fix_gate, (soft_mov_roi.shape[1], soft_mov_roi.shape[0]))
+            mov_gate = cv2.resize(mov_gate, (soft_mov_roi.shape[1], soft_mov_roi.shape[0]))
+            fix_gate = soft_fix_roi - fix_gate
+            mov_gate = soft_mov_roi - mov_gate
+            ori_soft_mov_roi = cv2.resize(mov_gate, (H, W))
+            ori_soft_fix_roi = cv2.resize(fix_gate, (H, W))
+
+
+            soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
+            soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
+            cv2.imwrite('/home/shiqi/fix_roi.png', soft_fix_roi)
+            cv2.imwrite('/home/shiqi/mov_roi.png', soft_mov_roi)
             ori_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_mov_roi), cv2.COLORMAP_JET)
             ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
             cv2.imwrite('/home/shiqi/ori_fix_roi.png', ori_soft_fix_roi)
