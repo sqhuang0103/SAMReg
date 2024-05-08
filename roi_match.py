@@ -246,7 +246,7 @@ class RoiMatching():
         self.mov_points = []
         self.mov_rois = []
         for _p in self.fix_protos:
-            mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
+            soft_mov_roi, mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
             import pdb
             pdb.set_trace()
             mov_roi = mov_roi.float()
@@ -372,12 +372,12 @@ class RoiMatching():
         similarity_map = F.cosine_similarity(prototype_expanded, image_embedding_flat, dim=0)
 
         # Reshape similarity to match the spatial dimensions of the image
-        mask = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
+        soft_mask = similarity_map.view(image_embedding.size(2), image_embedding.size(3))
 
         # Generate foreground mask based on threshold
-        mask = torch.where(mask >= similarity_map.max(), torch.ones_like(mask), torch.zeros_like(mask))
+        hard_mask = torch.where(soft_mask >= similarity_map.max(), torch.ones_like(soft_mask), torch.zeros_like(soft_mask))
 
-        return mask
+        return soft_mask,hard_mask
 
 
 def visualize_masks(image1, masks1, image2, masks2):
