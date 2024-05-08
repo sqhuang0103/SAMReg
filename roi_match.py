@@ -285,10 +285,10 @@ class RoiMatching():
             # print(mov_roi.shape) # True
             fix_gate = self.fix_rois[0].copy()
             mov_gate = mov_roi.copy()
-            fix_gate = fix_gate.cpu().detach().numpy()
-            mov_gate = mov_gate.cpu().detach().numpy()
             fix_gate = fix_gate.float()
             mov_gate = mov_gate.float()
+            fix_gate = fix_gate.cpu().detach().numpy()
+            mov_gate = mov_gate.cpu().detach().numpy()
             fix_gate = 1-fix_gate
             mov_gate = 1-mov_gate
             fix_gate *= 0.3
