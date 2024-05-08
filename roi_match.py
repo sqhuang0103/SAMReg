@@ -247,8 +247,22 @@ class RoiMatching():
         self.mov_rois = []
         for _p in self.fix_protos:
             soft_mov_roi, mov_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
-            import pdb
-            pdb.set_trace()
+            ######################################################################
+            soft_fix_roi, _fix_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
+            soft_fix_roi = soft_fix_roi.float()
+            soft_mov_roi = soft_mov_roi.float()
+            ori_soft_mov_roi = cv2.resize(soft_mov_roi, (H, W))
+            ori_soft_fix_roi = cv2.resize(soft_fix_roi, (H, W))
+            soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
+            soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
+            ori_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_mov_roi), cv2.COLORMAP_JET)
+            ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
+            cv2.imwrite('/home/shiqi/fix_roi.png',soft_fix_roi)
+            cv2.imwrite('/home/shiqi/mov_roi.png',soft_mov_roi)
+            cv2.imwrite('/home/shiqi/ori_fix_roi.png',ori_soft_fix_roi)
+            cv2.imwrite('/home/shiqi/ori_fix_roi.png',ori_soft_mov_roi)
+
+            #########################################################################
             mov_roi = mov_roi.float()
             mov_roi = F.interpolate(mov_roi.unsqueeze(0).unsqueeze(0), size=(H,W), mode='bilinear', align_corners=False)
             mov_roi = (mov_roi > 0).to(torch.bool)
