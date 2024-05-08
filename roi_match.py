@@ -251,6 +251,8 @@ class RoiMatching():
             soft_fix_roi, _fix_roi = self._generate_foreground_mask(_p,self.emb2,threshold=0.9)
             soft_fix_roi = soft_fix_roi.float()
             soft_mov_roi = soft_mov_roi.float()
+            soft_mov_roi = soft_mov_roi.detach().numpy()
+            soft_fix_roi = soft_fix_roi.detach().numpy()
             ori_soft_mov_roi = cv2.resize(soft_mov_roi, (H, W))
             ori_soft_fix_roi = cv2.resize(soft_fix_roi, (H, W))
             soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
