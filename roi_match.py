@@ -273,7 +273,7 @@ class RoiMatching():
             mov_roi = mov_rois[0][0,torch.argmax(mov_scores[0][0]),:,:]
             #############################################################################
             # here to visualize
-            soft_fix_roi, _fix_roi = self._generate_foreground_mask(_p, self.emb2, threshold=0.9)
+            soft_fix_roi, _fix_roi = self._generate_foreground_mask(_p, self.emb1, threshold=0.9)
             soft_fix_roi = soft_fix_roi.float()
             soft_mov_roi = soft_mov_roi.float()
             soft_mov_roi = soft_mov_roi.cpu().detach().numpy()
