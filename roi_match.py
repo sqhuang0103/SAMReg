@@ -624,7 +624,7 @@ fix_mask,s, p, mov_masks, mask_prompt, point_prompt = RM.get_prompt_roi()
 color = [[0, 199, 255], [255, 86, 83],[255, 0, 0]]
 _fix_mask = fix_mask[0][0][:1]
 _fix_mask = _fix_mask.detach().numpy()
-trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2],alpha=1)
 for i in range(2):
     _mov = mov_masks[i].unsqueeze(0)
     _mov = _mov.detach().numpy()
