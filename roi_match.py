@@ -291,8 +291,8 @@ class RoiMatching():
             mov_gate = mov_gate.cpu().detach().numpy()
             fix_gate = 1-fix_gate
             mov_gate = 1-mov_gate
-            fix_gate *= 0.1
-            mov_gate *= 0.1
+            fix_gate *= 0.2
+            mov_gate *= 0.2
             fix_gate = cv2.resize(fix_gate, (soft_mov_roi.shape[1], soft_mov_roi.shape[0]))
             mov_gate = cv2.resize(mov_gate, (soft_mov_roi.shape[1], soft_mov_roi.shape[0]))
             fix_gate = soft_fix_roi - fix_gate
@@ -569,6 +569,35 @@ def visualize_masks_with_sim(image, masks):
         ax.axis('off')
     plt.tight_layout()
     # plt.show()
+
+def create_transparent_mask(binary_mask, save_path, foreground_color=(12, 34, 234), alpha=0.5):
+    """
+    Convert a binary mask to a colorful transparent mask using OpenCV.
+
+    Args:
+    binary_mask (numpy.array): A binary mask of shape (1, h, w)
+    foreground_color (tuple): RGB color for the mask foreground
+    alpha (float): Alpha transparency value
+
+    Returns:
+    numpy.array: An RGBA image as a numpy array
+    """
+    # Check input dimensions
+    if binary_mask.shape[0] != 1:
+        raise ValueError("Expected binary mask with shape (1, h, w)")
+
+    # Remove the first dimension and create an RGB image based on the binary mask
+    mask_rgb = np.zeros((*binary_mask.shape[1:], 3), dtype=np.uint8)
+    mask_rgb[binary_mask[0] == 1] = foreground_color
+
+    # Create an alpha channel based on the binary mask
+    mask_alpha = (binary_mask[0] * alpha * 255).astype(np.uint8)
+
+    # Combine the RGB and alpha channels to create an RGBA image
+    mask_rgba = cv2.merge((mask_rgb[:, :, 0], mask_rgb[:, :, 1], mask_rgb[:, :, 2], mask_alpha))
+    cv2.imwrite(save_path,mask_rgba)
+
+    return mask_rgba
 
 
 
