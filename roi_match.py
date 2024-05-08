@@ -303,16 +303,18 @@ class RoiMatching():
             ori_soft_fix_roi = cv2.resize(fix_gate, (H, W))
 
 
-            soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
-            soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
-            cv2.imwrite('/home/shiqi/fix_roi.png', soft_fix_roi)
-            cv2.imwrite('/home/shiqi/mov_roi.png', soft_mov_roi)
-            ori_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_mov_roi), cv2.COLORMAP_JET)
-            ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
-            cv2.imwrite('/home/shiqi/ori_fix_roi.png', ori_soft_fix_roi)
-            cv2.imwrite('/home/shiqi/ori_mov_roi.png', ori_soft_mov_roi)
+            hm_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
+            hm_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
+            cv2.imwrite('/home/shiqi/fix_roi.png', hm_soft_fix_roi)
+            cv2.imwrite('/home/shiqi/mov_roi.png', hm_soft_mov_roi)
+            hm_ori_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_mov_roi), cv2.COLORMAP_JET)
+            hm_ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
+            cv2.imwrite('/home/shiqi/ori_fix_roi.png', hm_ori_soft_fix_roi)
+            cv2.imwrite('/home/shiqi/ori_mov_roi.png', hm_ori_soft_mov_roi)
 
             ### visualize prompts
+            import pdb
+            pdb.set_trace()
             mask_prompt = np.uint8(ori_soft_mov_roi>0.9)
             point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
 
@@ -621,7 +623,7 @@ RM = RoiMatching(im1,im2,device,url=url)
 fix_mask,s, p, mov_masks, mask_prompt, point_prompt = RM.get_prompt_roi()
 ###############################################################
 # save image
-color = [[0, 199, 255], [255, 86, 83],[255, 0, 0]]
+color = [[0, 199, 255], [255, 86, 83],[0, 0, 255]]
 _fix_mask = fix_mask[0][0][:1]
 _fix_mask = _fix_mask.detach().numpy()
 trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2])
@@ -629,8 +631,8 @@ for i in range(2):
     _mov = mov_masks[i].unsqueeze(0)
     _mov = _mov.detach().numpy()
     trans_mask = create_transparent_mask(_mov, save_path='/home/shiqi/mov_mask_{}.png'.format(i), foreground_color=color[2])
-trans_mask = create_transparent_mask(mask_prompt[None,:,:,0],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
-trans_mask = create_transparent_mask(point_prompt[None,:,:,0],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(mask_prompt[None,:,:,1],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(point_prompt[None,:,:,1],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
 
 ###############################################################
 end_time = time.time()
