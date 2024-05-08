@@ -622,12 +622,12 @@ fix_mask,s, p, mov_masks, mask_prompt, point_prompt = RM.get_prompt_roi()
 ###############################################################
 # save image
 color = [[0, 199, 255], [255, 86, 83],[255, 0, 0]]
-_fix_mask = fix_mask[0][0][0]
+_fix_mask = fix_mask[0][0][:1]
 trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2])
 for i in range(2):
-    trans_mask = create_transparent_mask(mov_masks[i], save_path='/home/shiqi/mov_mask_{}.png'.format(i), foreground_color=color[2])
-trans_mask = create_transparent_mask(mask_prompt[:,:,0],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
-trans_mask = create_transparent_mask(point_prompt[:,:,0],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
+    trans_mask = create_transparent_mask(mov_masks[i].unsqueeze(0), save_path='/home/shiqi/mov_mask_{}.png'.format(i), foreground_color=color[2])
+trans_mask = create_transparent_mask(mask_prompt[:,:,:1],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(point_prompt[:,:,:1],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
 
 ###############################################################
 end_time = time.time()
