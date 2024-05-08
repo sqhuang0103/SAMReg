@@ -311,15 +311,19 @@ class RoiMatching():
             ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
             cv2.imwrite('/home/shiqi/ori_fix_roi.png', ori_soft_fix_roi)
             cv2.imwrite('/home/shiqi/ori_mov_roi.png', ori_soft_mov_roi)
-            import pdb
-            pdb.set_trace()
+
+            ### visualize prompts
+            mask_prompt = np.uint8(ori_soft_mov_roi>0.9)
+            point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
+
+
 
             ################################################################################
             self.mov_rois.append(mov_roi)
             self.mov_rois.append(mov_roi)
 
 
-        return masks_f, scores_f, self.n_coords, self.mov_rois
+        return masks_f, scores_f, self.n_coords, self.mov_rois, mask_prompt, point_prompt
 
     def _remove_duplicate_masks(self,masks):
         grouped_masks = {}
@@ -614,11 +618,13 @@ RM = RoiMatching(im1,im2,device,url=url)
 
 # transformers SAM implementation
 # RM.get_paired_roi()
-m,s, p, mov_masks = RM.get_prompt_roi()
+fix_mask,s, p, mov_masks, mask_prompt, point_prompt = RM.get_prompt_roi()
+import pdb
+pdb.set_trace()
 end_time = time.time()
 inference_time = end_time - start_time
 print(f"Inference Time: {inference_time:.3f} seconds")
-visualize_masks_with_scores(im1,m[0],s[0], p)
+visualize_masks_with_scores(im1,fix_mask[0],s[0], p)
 visualize_masks_with_sim(im2, mov_masks)
 plt.show()
 # visualized_image1, visualized_image2 = visualize_masks(im1, RM.masks1, im2, RM.masks2)
