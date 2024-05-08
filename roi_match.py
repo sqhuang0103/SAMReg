@@ -283,8 +283,8 @@ class RoiMatching():
 
             # print( self.fix_rois[0].shape) #(834,834),True
             # print(mov_roi.shape) # True
-            fix_gate = self.fix_rois[0].copy()
-            mov_gate = mov_roi.copy()
+            fix_gate = self.fix_rois[0][:]
+            mov_gate = mov_roi[:]
             fix_gate = fix_gate.float()
             mov_gate = mov_gate.float()
             fix_gate = fix_gate.cpu().detach().numpy()
@@ -309,6 +309,8 @@ class RoiMatching():
             ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
             cv2.imwrite('/home/shiqi/ori_fix_roi.png', ori_soft_fix_roi)
             cv2.imwrite('/home/shiqi/ori_mov_roi.png', ori_soft_mov_roi)
+            import pdb
+            pdb.set_trace()
 
             ################################################################################
             self.mov_rois.append(mov_roi)
