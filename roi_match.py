@@ -629,8 +629,8 @@ for i in range(2):
     _mov = mov_masks[i].unsqueeze(0)
     _mov = _mov.detach().numpy()
     trans_mask = create_transparent_mask(_mov, save_path='/home/shiqi/mov_mask_{}.png'.format(i), foreground_color=color[2])
-trans_mask = create_transparent_mask(mask_prompt[None,:,:,1],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
-trans_mask = create_transparent_mask(point_prompt[None,:,:,1],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(mask_prompt[None,:,:],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2])
+trans_mask = create_transparent_mask(point_prompt[None,:,:],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2])
 
 ###############################################################
 end_time = time.time()
