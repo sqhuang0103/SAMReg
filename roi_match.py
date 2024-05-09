@@ -224,7 +224,7 @@ class RoiMatching():
         H,W = self.img1.size
         self.fix_rois, self.fix_protos = [],[]
         # prompt_point = self._get_random_coordinates((H,W),1) # array([[464, 360]])
-        prompt_point = torch.tensor([[100,113]])#173,97
+        prompt_point = torch.tensor([[87,137]])#173,97
         # prompt_point = torch.tensor([[85,120]]) #50,160 #10,12 #94,10 # #[68,51],[71,36]
 
         self.emb1, self.emb2 = batched_outputs[0].unsqueeze(0), batched_outputs[1].unsqueeze(0) # torch.Size([256, 64, 64])
