@@ -312,7 +312,7 @@ class RoiMatching():
             cv2.imwrite('/home/shiqi/ori_mov_roi.png', hm_ori_soft_mov_roi)
 
             ### visualize prompts
-            mask_prompt = np.uint8(ori_soft_mov_roi>0.87)
+            mask_prompt = np.uint8(ori_soft_mov_roi>0.7)
             point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
 
             # draw point prompt
@@ -624,6 +624,8 @@ def create_transparent_mask(binary_mask, save_path, foreground_color=(12, 34, 23
 
 im1 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_R.png").convert("RGB")
 im2 = Image.open("/home/shiqi/SAMReg/example/pathology/1B_B7_T.png").convert("RGB")
+# im1 = Image.open("/home/shiqi/SAMReg/prompt_examples/Prostate/prostate_img_0_32.png").convert("RGB")
+# im2 = Image.open("/home/shiqi/SAMReg/prompt_examples/Prostate/prostate_img_1_32.png").convert("RGB")
 # im1 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image1.png").convert("RGB")
 # im2 = Image.open("/home/shiqi/SAMReg/example/prostate_2d/image2.png").convert("RGB")
 device='cuda:0'
