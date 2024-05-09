@@ -318,7 +318,7 @@ class RoiMatching():
             # draw point prompt
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(ori_soft_mov_roi)
             max_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
-            cv2.circle(max_point_prompt, max_loc, radius=7, color=255, thickness=-1)
+            cv2.circle(max_point_prompt, max_loc, radius=17, color=255, thickness=-1)
 
             # Flatten the heatmap and find the indices of the smallest values
             flat_indices = np.argpartition(ori_soft_mov_roi.ravel(), 5)[:5]
@@ -327,7 +327,7 @@ class RoiMatching():
             min_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
             # Draw circles at the minimum value points on the mask
             for coord in min_coords:
-                cv2.circle(min_point_prompt, (coord[1], coord[0]), radius=7, color=255, thickness=-1)
+                cv2.circle(min_point_prompt, (coord[1], coord[0]), radius=17, color=255, thickness=-1)
 
 
 
