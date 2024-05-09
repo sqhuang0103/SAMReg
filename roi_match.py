@@ -312,7 +312,7 @@ class RoiMatching():
             cv2.imwrite('/home/shiqi/ori_mov_roi.png', hm_ori_soft_mov_roi)
 
             ### visualize prompts
-            mask_prompt = np.uint8(ori_soft_mov_roi>0.9)
+            mask_prompt = np.uint8(ori_soft_mov_roi>0.87)
             point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
 
             # draw point prompt
