@@ -328,7 +328,9 @@ class RoiMatching():
             print(len(min_coords))
             # Draw circles at the minimum value points on the mask
             for coord in min_coords:
+                print(coord)
                 cv2.circle(min_point_prompt, (coord[1], coord[0]), radius=17, color=255, thickness=-1)
+                print(min_point_prompt.max())
 
 
 
