@@ -302,11 +302,10 @@ class RoiMatching():
             ori_soft_mov_roi = cv2.resize(mov_gate, (H, W))
             ori_soft_fix_roi = cv2.resize(fix_gate, (H, W))
 
-
-            hm_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
-            hm_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
-            cv2.imwrite('/home/shiqi/fix_roi.png', hm_soft_fix_roi)
-            cv2.imwrite('/home/shiqi/mov_roi.png', hm_soft_mov_roi)
+            # hm_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * soft_fix_roi), cv2.COLORMAP_JET)
+            # hm_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * soft_mov_roi), cv2.COLORMAP_JET)
+            # cv2.imwrite('/home/shiqi/fix_roi.png', hm_soft_fix_roi)
+            # cv2.imwrite('/home/shiqi/mov_roi.png', hm_soft_mov_roi)
             hm_ori_soft_mov_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_mov_roi), cv2.COLORMAP_JET)
             hm_ori_soft_fix_roi = cv2.applyColorMap(np.uint8(255 * ori_soft_fix_roi), cv2.COLORMAP_JET)
             cv2.imwrite('/home/shiqi/ori_fix_roi.png', hm_ori_soft_fix_roi)
@@ -316,6 +315,20 @@ class RoiMatching():
             mask_prompt = np.uint8(ori_soft_mov_roi>0.9)
             point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
 
+            # draw point prompt
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(ori_soft_mov_roi)
+            max_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
+            cv2.circle(max_point_prompt, max_loc, radius=7, color=255, thickness=-1)
+
+            # Flatten the heatmap and find the indices of the smallest values
+            flat_indices = np.argpartition(ori_soft_mov_roi.ravel(), 5)[:5]
+            # Convert flat indices to 2D coordinates
+            min_coords = np.column_stack(np.unravel_index(flat_indices, ori_soft_mov_roi.shape))
+            min_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
+            # Draw circles at the minimum value points on the mask
+            for coord in min_coords:
+                cv2.circle(min_point_prompt, (coord[1], coord[0]), radius=7, color=255, thickness=-1)
+
 
 
             ################################################################################
@@ -323,7 +336,7 @@ class RoiMatching():
             self.mov_rois.append(mov_roi)
 
 
-        return masks_f, scores_f, self.n_coords, self.mov_rois, mask_prompt, point_prompt
+        return masks_f, scores_f, self.n_coords, self.mov_rois, mask_prompt, max_point_prompt, min_point_prompt
 
     def _remove_duplicate_masks(self,masks):
         grouped_masks = {}
@@ -589,6 +602,7 @@ def create_transparent_mask(binary_mask, save_path, foreground_color=(12, 34, 23
     # Check input dimensions
     if binary_mask.shape[0] != 1:
         raise ValueError("Expected binary mask with shape (1, h, w)")
+    binary_mask = np.uint8(binary_mask>0)
 
     # Remove the first dimension and create an RGB image based on the binary mask
     mask_rgb = np.zeros((*binary_mask.shape[1:], 3), dtype=np.uint8)
@@ -618,19 +632,20 @@ RM = RoiMatching(im1,im2,device,url=url)
 
 # transformers SAM implementation
 # RM.get_paired_roi()
-fix_mask,s, p, mov_masks, mask_prompt, point_prompt = RM.get_prompt_roi()
+fix_mask,s, p, mov_masks, mask_prompt, max_point_prompt, min_point_prompt = RM.get_prompt_roi()
 ###############################################################
 # save image
-color = [[0, 199, 255], [255, 86, 83],[255, 0, 0]]
+color = [[0, 199, 255], [255, 86, 83],[255, 0, 0],[53,130,84]]
 _fix_mask = fix_mask[0][0][:1]
 _fix_mask = _fix_mask.detach().numpy()
-trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2],alpha=1)
+trans_mask = create_transparent_mask(_fix_mask,save_path='/home/shiqi/fix_mask.png',foreground_color=color[2],alpha=0.5)
 for i in range(2):
     _mov = mov_masks[i].unsqueeze(0)
     _mov = _mov.detach().numpy()
     trans_mask = create_transparent_mask(_mov, save_path='/home/shiqi/mov_mask_{}.png'.format(i), foreground_color=color[2])
-trans_mask = create_transparent_mask(mask_prompt[None,:,:],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2],alpha=1)
-trans_mask = create_transparent_mask(point_prompt[None,:,:],save_path='/home/shiqi/point_prompt.png',foreground_color=color[2],alpha=1)
+trans_mask = create_transparent_mask(mask_prompt[None,:,:],save_path='/home/shiqi/mask_prompt.png',foreground_color=color[2],alpha=0.5)
+trans_mask = create_transparent_mask(max_point_prompt[None,:,:],save_path='/home/shiqi/max_point_prompt.png',foreground_color=color[2],alpha=0.5)
+trans_mask = create_transparent_mask(min_point_prompt[None,:,:],save_path='/home/shiqi/min_point_prompt.png',foreground_color=color[3],alpha=0.5)
 
 ###############################################################
 end_time = time.time()
