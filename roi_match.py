@@ -312,7 +312,7 @@ class RoiMatching():
             cv2.imwrite('/home/shiqi/ori_mov_roi.png', hm_ori_soft_mov_roi)
 
             ### visualize prompts
-            mask_prompt = np.uint8(ori_soft_mov_roi>0.7)
+            mask_prompt = np.uint8(ori_soft_mov_roi>0.72)
             point_prompt = np.uint8(ori_soft_mov_roi>= ori_soft_mov_roi.max())
 
             # draw point prompt
@@ -321,7 +321,7 @@ class RoiMatching():
             cv2.circle(max_point_prompt, max_loc, radius=17, color=255, thickness=-1)
 
             # Flatten the heatmap and find the indices of the smallest values
-            flat_indices = np.argpartition(ori_soft_mov_roi.ravel(), 5)[:5]
+            flat_indices = np.argpartition(ori_soft_mov_roi.ravel(), 20)[:20]
             # Convert flat indices to 2D coordinates
             min_coords = np.column_stack(np.unravel_index(flat_indices, ori_soft_mov_roi.shape))
             min_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
