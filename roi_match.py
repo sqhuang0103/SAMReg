@@ -325,6 +325,7 @@ class RoiMatching():
             # Convert flat indices to 2D coordinates
             min_coords = np.column_stack(np.unravel_index(flat_indices, ori_soft_mov_roi.shape))
             min_point_prompt = np.zeros_like(ori_soft_mov_roi, dtype=np.uint8)
+            print(len(min_coords))
             # Draw circles at the minimum value points on the mask
             for coord in min_coords:
                 cv2.circle(min_point_prompt, (coord[1], coord[0]), radius=17, color=255, thickness=-1)
