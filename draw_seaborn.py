@@ -237,7 +237,7 @@ def sota():
             x = np.arange(3)
             ax.bar(x, method_scores, color=['orange', 'blue', 'brown'])
             ax.set_xticks(x)
-            ax.set_xticklabels(methods[0,1,-1])
+            ax.set_xticklabels([methods[0],methods[1],methods[-1]])
         ax.set_title(dataset)
         ax.set_ylim(0, 100)  # Set the y-axis limits
 
