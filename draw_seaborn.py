@@ -98,7 +98,7 @@ draw_shaddow_line(mar_num_flip,flip_dice,flip_dice_std,line_color='darkgreen',sh
 plt.xticks(x_ticket)
 plt.yticks(y_ticket)
 plt.legend()
-plt.savefig('marg_dice.png', bbox_inches='tight')
+plt.savefig('/home/shiqi/marg_dice.png', bbox_inches='tight')
 
 
 
