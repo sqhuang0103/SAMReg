@@ -230,21 +230,22 @@ def sota():
         method_scores = scores[dataset]
         if i <= 2:
             x = np.arange(len(method_scores))
-            ax.bar(x, method_scores, color=['orange', 'blue', 'red', 'brown'])
+            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'steelblue', 'mediumorchid'])
             ax.set_xticks(x)
-            ax.set_xticklabels(methods)
+            # ax.set_xticklabels(methods)
         elif i > 2:
             x = np.arange(3)
-            ax.bar(x, method_scores, color=['orange', 'blue', 'brown'])
+            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'mediumorchid'])
             ax.set_xticks(x)
-            ax.set_xticklabels([methods[0],methods[1],methods[-1]])
+            # ax.set_xticklabels([methods[0],methods[1],methods[-1]])
         ax.set_title(dataset)
-        ax.set_ylim(0, 100)  # Set the y-axis limits
+        ax.set_ylim(0, 90)  # Set the y-axis limits
 
 
         # Only add y-label to the first subplot
         if i == 0:
             ax.set_ylabel('Dice Score (%)')
+        ax.set_xlabel('Method')
 
     # Add a legend
     axes[0].legend(loc='upper left')
