@@ -188,8 +188,73 @@ def tre():
     plt.legend()
     plt.savefig('/home/shiqi/marg_tre.png', bbox_inches='tight')
 
-dice()
-tre()
+def sota():
+    datasets = ['MR-Prostate', 'MR-Abdomen', 'CT-Lung', '2D-Pathology', '2D-Aerial']
+    methods = ['NiftyReg', 'VoxelMorph', 'LabelReg', 'PromptReg(Ours)']
+    scores = {
+        'MR-Prostate': [7.68,55.94,76.72,76.67],
+        'MR-Abdomen': [
+            8.93,
+            58.1,
+            75.97,
+            76.98,
+
+        ],
+        'CT-Lung': [
+            10.93,
+            77.98,
+            83.56,
+            90.14,
+
+        ],
+        '2D-Pathology': [
+            6.81,
+            59.34,
+            72.47,
+
+        ],
+        '2D-Aerial': [
+            10.21,
+            72.73,
+            86.29,
+
+        ],
+    }
+
+    num_methods = len(methods)
+    num_datasets = len(datasets)
+
+    fig, axes = plt.subplots(1, num_datasets, figsize=(18, 4), sharey=True)
+    for i, dataset in enumerate(datasets):
+        ax = axes[i]
+        method_scores = scores[dataset]
+        if i <= 2:
+            x = np.arange(len(method_scores))
+            ax.bar(x, method_scores, color=['orange', 'blue', 'red', 'brown'])
+            ax.set_xticks(x)
+            ax.set_xticklabels(methods)
+        elif i > 2:
+            x = np.arange(3)
+            ax.bar(x, method_scores, color=['orange', 'blue', 'brown'])
+            ax.set_xticks(x)
+            ax.set_xticklabels(methods)
+        ax.set_title(dataset)
+        ax.set_ylim(0, 100)  # Set the y-axis limits
+
+
+        # Only add y-label to the first subplot
+        if i == 0:
+            ax.set_ylabel('Dice Score (%)')
+
+    # Add a legend
+    axes[0].legend(loc='upper left')
+
+    # Adjust layout
+    plt.tight_layout()
+
+# dice()
+# tre()
+sota()
 plt.show()
 
 
