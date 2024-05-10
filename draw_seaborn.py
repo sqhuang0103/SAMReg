@@ -82,7 +82,7 @@ flip_dice_std = np.array([3.26 ,
 ])
 
 def draw_shaddow_line(x,y,std,line_color='deeppink',shadow_color='violet',label='rand'):
-    plt.plot(x, y, color=line_color, label=label)
+    plt.plot(x, y, color=line_color, marker='o',label=label)
     plt.fill_between(x, y - std, y + std, color=shadow_color, alpha=0.2)
 plt.figure()
 draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
