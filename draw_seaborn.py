@@ -220,26 +220,65 @@ def sota():
 
         ],
     }
+    errors = {
+        'MR-Prostate': [
+            3.98,
+            3.34,
+            3.23,
+            2.43,
+
+        ],
+        'MR-Abdomen': [
+            2.21,
+            3.95,
+            2.42,
+            2.67,
+
+        ],
+        'CT-Lung': [
+            2.02,
+            2.72,
+            2.43,
+            2.72,
+
+        ],
+        '2D-Pathology': [
+            3.02,
+            3.72,
+
+            3.72,
+
+        ],
+        '2D-Aerial': [
+            3.02,
+            2.41,
+
+            2.01,
+
+        ],
+    }
 
     num_methods = len(methods)
     num_datasets = len(datasets)
 
     fig, axes = plt.subplots(1, num_datasets, figsize=(24, 4), sharey=True)
     for i, dataset in enumerate(datasets):
+        bar_width = 0.2
         ax = axes[i]
         method_scores = scores[dataset]
+        error = errors[dataset]
         if i <= 2:
             x = np.arange(len(method_scores))
-            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'steelblue', 'mediumorchid'])
+            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'steelblue', 'mediumorchid'],width=bar_width, yerr=error, capsize=5)
             ax.set_xticks(x)
             # ax.set_xticklabels(methods)
         elif i > 2:
             x = np.arange(3)
-            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'mediumorchid'])
+            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'mediumorchid'],width=bar_width, yerr=error, capsize=5)
             ax.set_xticks(x)
             # ax.set_xticklabels([methods[0],methods[1],methods[-1]])
         ax.set_title(dataset)
-        ax.set_ylim(0, 90)  # Set the y-axis limits
+        ax.set_ylim(0, 92)  # Set the y-axis limits
 
 
         # Only add y-label to the first subplot
