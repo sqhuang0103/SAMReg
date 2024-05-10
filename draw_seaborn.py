@@ -189,6 +189,7 @@ def tre():
     # plt.savefig('/home/shiqi/marg_tre.png', bbox_inches='tight')
 
 dice()
+tre()
 plt.show()
 
 
