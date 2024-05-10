@@ -227,9 +227,9 @@ def sota():
             ax.set_ylabel('Dice Score (%)')
 
     # Add a legend outside the last subplot
-    handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
-    labels = methods[:len(colors)]
-    fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 1.1))
+    # handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
+    # labels = methods[:len(colors)]
+    # fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 1.1))
 
     # Adjust layout
     plt.tight_layout()
