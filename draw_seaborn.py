@@ -87,6 +87,8 @@ def draw_shaddow_line(x,y,std,line_color='deeppink',shadow_color='violet',label=
 plt.figure()
 plt.xlim((1,10))
 plt.ylim((60,80))
+plt.xlabel('# of marginlization')
+plt.xlabel('Dice (%)')
 x_ticket = np.arange(1,10.5,1)
 y_ticket = np.arange(60,80.5,2)
 draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
