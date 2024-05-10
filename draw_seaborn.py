@@ -28,58 +28,58 @@ sns.set_theme(style="darkgrid")
 
 mar_num = np.array([1,2,4,6,8,10])
 mar_num_flip = np.array([1,2,3,4])
-rand_dice = [70.42 ,
+rand_dice = np.array([70.42 ,
 73.65,
 75.48 ,
 76.68 ,
 76.90 ,
 77.34 ,
-]
-rand_dice_std = [3.26 ,
+])
+rand_dice_std = np.array([3.26 ,
 3.25 ,
 3.02 ,
 2.78 ,
 2.55 ,
 2.37 ,
-]
-rot_dice = [70.42 ,
+])
+rot_dice = np.array([70.42 ,
 72.94 ,
 73.38 ,
 75.68 ,
 76.19 ,
 76.53 ,
-]
-rot_dice_std = [3.26 ,
+])
+rot_dice_std = np.array([3.26 ,
 3.16 ,
 3.22 ,
 2.98 ,
 2.96 ,
 2.77 ,
-]
-scale_dice = [70.42 ,
+])
+scale_dice = np.array([70.42 ,
 74.27 ,
 76.18 ,
 76.68 ,
 75.19 ,
 75.85
-]
-scale_dice_std = [3.26 ,
+])
+scale_dice_std = np.array([3.26 ,
 3.05 ,
 2.87 ,
 2.58 ,
 2.35 ,
 2.37
-]
-flip_dice = [70.42 ,
+])
+flip_dice = np.array([70.42 ,
 71.92 ,
 72.36 ,
 73.97
-]
-flip_dice_std = [3.26 ,
+])
+flip_dice_std = np.array([3.26 ,
 3.15 ,
 2.77 ,
 2.58
-]
+])
 
 def draw_shaddow_line(x,y,std,color='deeppink',label='rand'):
     plt.plot(x, y, color=color, label=label)
