@@ -81,11 +81,14 @@ flip_dice_std = np.array([3.26 ,
 2.58
 ])
 
-def draw_shaddow_line(x,y,std,color='deeppink',label='rand'):
-    plt.plot(x, y, color=color, label=label)
-    plt.fill_between(x, y - std, y + std, color='violet', alpha=0.2)
+def draw_shaddow_line(x,y,std,line_color='deeppink',shadow_color='violet',label='rand'):
+    plt.plot(x, y, color=line_color, label=label)
+    plt.fill_between(x, y - std, y + std, color=shadow_color, alpha=0.2)
 plt.figure()
-draw_shaddow_line(mar_num,rand_dice,rand_dice_std)
+draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
+draw_shaddow_line(mar_num,rot_dice,rot_dice_std,line_color='darkblue',shadow_color='royalblue',label='rotation')
+draw_shaddow_line(mar_num,scale_dice,scale_dice_std,line_color='darkorange',shadow_color='gold',label='scale')
+draw_shaddow_line(mar_num_flip,flip_dice,flip_dice_std,line_color='darkgreen',shadow_color='lightgreen',label='scale')
 plt.legend()
 
 
