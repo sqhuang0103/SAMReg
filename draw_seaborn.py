@@ -224,7 +224,7 @@ def sota():
     num_methods = len(methods)
     num_datasets = len(datasets)
 
-    fig, axes = plt.subplots(1, num_datasets, figsize=(18, 4), sharey=True)
+    fig, axes = plt.subplots(1, num_datasets, figsize=(24, 4), sharey=True)
     for i, dataset in enumerate(datasets):
         ax = axes[i]
         method_scores = scores[dataset]
