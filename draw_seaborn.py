@@ -206,7 +206,7 @@ def sota():
         '2D-Aerial': [3.02, 2.41, None, 2.01]
     }
 
-    colors = ['firebrick', 'olivedrab', 'steelblue', 'mediumorchid']
+    colors = ['skyblue', 'lightskyblue', 'steelblue', 'orchid']
 
     fig, axes = plt.subplots(1, len(datasets), figsize=(18, 2), sharey=True)
 
