@@ -88,7 +88,7 @@ plt.figure()
 plt.xlim((1,10))
 plt.ylim((60,80))
 plt.xlabel('# of marginlization')
-plt.xlabel('Dice (%)')
+plt.ylabel('Dice (%)')
 x_ticket = np.arange(1,10.5,1)
 y_ticket = np.arange(60,80.5,2)
 draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
@@ -98,6 +98,7 @@ draw_shaddow_line(mar_num_flip,flip_dice,flip_dice_std,line_color='darkgreen',sh
 plt.xticks(x_ticket)
 plt.yticks(y_ticket)
 plt.legend()
+plt.savefig('marg_dice.png', bbox_inches='tight')
 
 
 
