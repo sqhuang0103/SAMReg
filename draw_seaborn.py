@@ -190,7 +190,7 @@ def tre():
 
 def sota():
     datasets = ['MR-Prostate', 'MR-Abdomen', 'CT-Lung', '2D-Pathology', '2D-Aerial']
-    methods = ['NiftyReg', 'VoxelMorph', 'LabelReg', 'PromptReg(Ours)']
+    methods = ['NiftyReg', 'VoxelMorph*', 'LabelReg*', 'PromptReg']
     scores = {
         'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
         'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
@@ -224,8 +224,8 @@ def sota():
 
         x = np.arange(len(valid_scores))
         ax.bar(x, valid_scores, color=valid_colors, width=0.8, yerr=valid_errors, capsize=5)
-        ax.set_xticks(x)
-        ax.set_xticklabels(valid_methods, rotation=45, ha='right')
+        ax.set_xticks([])
+        # ax.set_xticklabels(valid_methods, rotation=45, ha='right')
         ax.set_title(dataset)
         ax.set_xlabel('Methods')
 
