@@ -190,7 +190,7 @@ def tre():
 
 def sota():
     datasets = ['MR-Prostate', 'MR-Abdomen', 'CT-Lung', '2D-Pathology', '2D-Aerial']
-    methods = ['NiftyReg', 'VoxelMorph*', 'LabelReg*', 'PromptReg']
+    methods = ['NiftyReg', 'VoxelMorph*', 'LabelReg*', 'PromptReg\(Ours)']
     scores = {
         'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
         'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
