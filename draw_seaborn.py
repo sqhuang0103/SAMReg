@@ -86,13 +86,15 @@ def draw_shaddow_line(x,y,std,line_color='deeppink',shadow_color='violet',label=
     plt.fill_between(x, y - std, y + std, color=shadow_color, alpha=0.2)
 plt.figure()
 plt.xlim((1,11))
-plt.xlim((60,80))
+plt.ylim((60,80))
 x_ticket = np.arange(1,11,1)
 y_ticket = np.arange(60,80,2)
 draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
 draw_shaddow_line(mar_num,rot_dice,rot_dice_std,line_color='darkblue',shadow_color='royalblue',label='rotation')
 draw_shaddow_line(mar_num,scale_dice,scale_dice_std,line_color='darkorange',shadow_color='gold',label='scale')
 draw_shaddow_line(mar_num_flip,flip_dice,flip_dice_std,line_color='darkgreen',shadow_color='lightgreen',label='flip')
+plt.xticks(x_ticket)
+plt.yticks(y_ticket)
 plt.legend()
 
 
