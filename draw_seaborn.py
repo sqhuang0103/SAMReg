@@ -195,15 +195,17 @@ def sota():
         'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
         'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
         'CT-Lung': [10.93, 77.98, 83.56, 90.14],
-        '2D-Pathology': [6.81, 59.34, None, 72.47],
-        '2D-Aerial': [10.21, 72.73, None, 86.29]
+        # '2D-Pathology': [6.81, 59.34, None, 72.47],
+        # '2D-Aerial': [10.21, 72.73, None, 86.29]
+        '2D-Pathology': [6.81, 59.34, 0, 72.47],
+        '2D-Aerial': [10.21, 72.73, 0, 86.29]
     }
     errors = {
         'MR-Prostate': [3.98, 3.34, 3.23, 2.43],
         'MR-Abdomen': [2.21, 3.95, 2.42, 2.67],
         'CT-Lung': [2.02, 2.72, 2.43, 2.72],
-        '2D-Pathology': [3.02, 3.72, None, 3.72],
-        '2D-Aerial': [3.02, 2.41, None, 2.01]
+        '2D-Pathology': [3.02, 3.72, 0, 3.72],
+        '2D-Aerial': [3.02, 2.41, 0, 2.01]
     }
 
     colors = ['skyblue', 'lightskyblue', 'steelblue', 'orchid']
