@@ -224,7 +224,7 @@ def sota():
         # ax.set_xticks(x)
         # ax.set_xticklabels([method for _, _, _, method in valid_scores], rotation=45, ha='right')
         ax.set_title(dataset)
-        ax.ylabel('Method')
+        ax.set_xlabel('Method')
 
     # Only add y-label to the first subplot
     axes[0].set_ylabel('Dice Score (%)')
