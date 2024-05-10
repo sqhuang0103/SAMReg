@@ -206,35 +206,38 @@ def sota():
         '2D-Aerial': [3.02, 2.41, None, 2.01]
     }
 
+    colors = ['firebrick', 'olivedrab', 'steelblue', 'mediumorchid']
+
     fig, axes = plt.subplots(1, len(datasets), figsize=(18, 4), sharey=True)
 
     for i, dataset in enumerate(datasets):
-        if i == 0:
-            plt.legend(loc='center right', bbox_to_anchor=(1, 0.5))
         ax = axes[i]
-        method_scores = scores[dataset]
-        error = errors[dataset]
-        colors = ['firebrick', 'olivedrab', 'steelblue', 'mediumorchid']
-        valid_scores = [(score, err, color, method) for score, err, color, method in zip(method_scores, error, colors, methods) if score is not None]
+        dataset_scores = scores[dataset]
+        dataset_errors = errors[dataset]
+        valid_indices = [index for index, score in enumerate(dataset_scores) if score is not None]
+
+        # Extracting valid scores and errors based on non-None values
+        valid_scores = [dataset_scores[index] for index in valid_indices]
+        valid_errors = [dataset_errors[index] for index in valid_indices]
+        valid_colors = [colors[index] for index in valid_indices]
+        valid_methods = [methods[index] for index in valid_indices]
+
         x = np.arange(len(valid_scores))
-
-        for j, (score, err, color, method) in enumerate(valid_scores):
-            ax.bar(x[j], score, color=color, width=0.8, yerr=err, capsize=5, label=method)
-
-        # ax.set_xticks(x)
-        # ax.set_xticklabels([method for _, _, _, method in valid_scores], rotation=45, ha='right')
+        ax.bar(x, valid_scores, color=valid_colors, width=0.8, yerr=valid_errors, capsize=5)
+        ax.set_xticks(x)
+        ax.set_xticklabels(valid_methods, rotation=45, ha='right')
         ax.set_title(dataset)
-        ax.set_xlabel('Method')
+        ax.set_xlabel('Methods')
 
-    # Only add y-label to the first subplot
-    axes[0].set_ylabel('Dice Score (%)')
+        if i == 0:
+            ax.set_ylabel('Dice Score (%)')
 
-    # Add a legend outside the plot
-    # plt.legend(loc='center right', bbox_to_anchor=(1, 0.5))
+    # Global legend for all methods, placed outside the plot
+    handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
+    plt.legend(handles, methods, loc='center left', bbox_to_anchor=(1, 0.5), title="Methods")
 
-    # Adjust layout
     plt.tight_layout()
-    plt.subplots_adjust(right=0.85)  # Adjust the right margin so the legend fits
+    plt.subplots_adjust(right=0.8)
 
 # dice()
 # tre()
