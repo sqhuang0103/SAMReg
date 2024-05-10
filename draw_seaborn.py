@@ -196,19 +196,21 @@ def sota():
         'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
         'CT-Lung': [10.93, 77.98, 83.56, 90.14],
         '2D-Pathology': [6.81, 59.34, None, 72.47],
-        '2D-Aerial': [10.21, None, 72.73, 86.29]
+        '2D-Aerial': [10.21, 72.73, None, 86.29]
     }
     errors = {
         'MR-Prostate': [3.98, 3.34, 3.23, 2.43],
         'MR-Abdomen': [2.21, 3.95, 2.42, 2.67],
         'CT-Lung': [2.02, 2.72, 2.43, 2.72],
         '2D-Pathology': [3.02, 3.72, None, 3.72],
-        '2D-Aerial': [3.02, None, 2.41, 2.01]
+        '2D-Aerial': [3.02, 2.41, None, 2.01]
     }
 
     fig, axes = plt.subplots(1, len(datasets), figsize=(18, 4), sharey=True)
 
     for i, dataset in enumerate(datasets):
+        if i == 0:
+            plt.legend(loc='center right', bbox_to_anchor=(1, 0.5))
         ax = axes[i]
         method_scores = scores[dataset]
         error = errors[dataset]
@@ -219,15 +221,16 @@ def sota():
         for j, (score, err, color, method) in enumerate(valid_scores):
             ax.bar(x[j], score, color=color, width=0.8, yerr=err, capsize=5, label=method)
 
-        ax.set_xticks(x)
-        ax.set_xticklabels([method for _, _, _, method in valid_scores], rotation=45, ha='right')
+        # ax.set_xticks(x)
+        # ax.set_xticklabels([method for _, _, _, method in valid_scores], rotation=45, ha='right')
         ax.set_title(dataset)
+        ax.ylabel('Method')
 
     # Only add y-label to the first subplot
     axes[0].set_ylabel('Dice Score (%)')
 
     # Add a legend outside the plot
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    # plt.legend(loc='center right', bbox_to_anchor=(1, 0.5))
 
     # Adjust layout
     plt.tight_layout()
