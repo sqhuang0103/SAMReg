@@ -59,7 +59,7 @@ rot_dice_std = np.array([3.26 ,
 scale_dice = np.array([70.42 ,
 74.27 ,
 76.18 ,
-76.68 ,
+76.06 ,
 75.19 ,
 75.85
 ])
@@ -85,6 +85,10 @@ def draw_shaddow_line(x,y,std,line_color='deeppink',shadow_color='violet',label=
     plt.plot(x, y, color=line_color, marker='o',label=label)
     plt.fill_between(x, y - std, y + std, color=shadow_color, alpha=0.2)
 plt.figure()
+plt.xlim((1,11))
+plt.xlim((60,80))
+x_ticket = np.arange(1,11,1)
+y_ticket = np.arange(60,80,2)
 draw_shaddow_line(mar_num,rand_dice,rand_dice_std,line_color='darkred',shadow_color='lightcoral',label='random')
 draw_shaddow_line(mar_num,rot_dice,rot_dice_std,line_color='darkblue',shadow_color='royalblue',label='rotation')
 draw_shaddow_line(mar_num,scale_dice,scale_dice_std,line_color='darkorange',shadow_color='gold',label='scale')
