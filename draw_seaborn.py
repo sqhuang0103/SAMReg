@@ -192,105 +192,48 @@ def sota():
     datasets = ['MR-Prostate', 'MR-Abdomen', 'CT-Lung', '2D-Pathology', '2D-Aerial']
     methods = ['NiftyReg', 'VoxelMorph', 'LabelReg', 'PromptReg(Ours)']
     scores = {
-        'MR-Prostate': [7.68,55.94,76.72,76.67],
-        'MR-Abdomen': [
-            8.93,
-            58.1,
-            75.97,
-            76.98,
-
-        ],
-        'CT-Lung': [
-            10.93,
-            77.98,
-            83.56,
-            90.14,
-
-        ],
-        '2D-Pathology': [
-            6.81,
-            59.34,
-            72.47,
-
-        ],
-        '2D-Aerial': [
-            10.21,
-            72.73,
-            86.29,
-
-        ],
+        'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
+        'MR-Abdomen': [8.93, 58.1, 75.97, 76.98],
+        'CT-Lung': [10.93, 77.98, 83.56, 90.14],
+        '2D-Pathology': [6.81, 59.34, 72.47],
+        '2D-Aerial': [10.21, 72.73, 86.29]
     }
     errors = {
-        'MR-Prostate': [
-            3.98,
-            3.34,
-            3.23,
-            2.43,
-
-        ],
-        'MR-Abdomen': [
-            2.21,
-            3.95,
-            2.42,
-            2.67,
-
-        ],
-        'CT-Lung': [
-            2.02,
-            2.72,
-            2.43,
-            2.72,
-
-        ],
-        '2D-Pathology': [
-            3.02,
-            3.72,
-
-            3.72,
-
-        ],
-        '2D-Aerial': [
-            3.02,
-            2.41,
-
-            2.01,
-
-        ],
+        'MR-Prostate': [3.98, 3.34, 3.23, 2.43],
+        'MR-Abdomen': [2.21, 3.95, 2.42, 2.67],
+        'CT-Lung': [2.02, 2.72, 2.43, 2.72],
+        '2D-Pathology': [3.02, 3.72, 3.72],
+        '2D-Aerial': [3.02, 2.41, 2.01]
     }
 
     num_methods = len(methods)
     num_datasets = len(datasets)
+    fig, axes = plt.subplots(1, num_datasets, figsize=(15, 5), sharey=True)
 
-    fig, axes = plt.subplots(1, num_datasets, sharey=True)
     for i, dataset in enumerate(datasets):
-        bar_width = 1
+        bar_width = 0.8
         ax = axes[i]
         method_scores = scores[dataset]
         error = errors[dataset]
-        if i <= 2:
-            x = np.arange(len(method_scores))
-            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'steelblue', 'mediumorchid'],width=bar_width, yerr=error, capsize=5)
-            ax.set_xticks(x)
-            # ax.set_xticklabels(methods)
-        elif i > 2:
-            x = np.arange(3)
-            ax.bar(x, method_scores, color=['firebrick', 'olivedrab', 'mediumorchid'],width=bar_width, yerr=error, capsize=5)
-            ax.set_xticks(x)
-            # ax.set_xticklabels([methods[0],methods[1],methods[-1]])
+        colors = ['firebrick', 'olivedrab', 'steelblue', 'mediumorchid'][:len(method_scores)]
+        x = np.arange(len(method_scores))
+        ax.bar(x, method_scores, color=colors, width=bar_width, yerr=error, capsize=3)
+        ax.set_xticks(x)
+        ax.set_xticklabels(methods[:len(method_scores)], rotation=45, ha='right')
         ax.set_title(dataset)
-        ax.set_ylim(0, 92)  # Set the y-axis limits
+        ax.set_ylim(0, 100)  # Adjust the y-axis limits
 
-
-        # Only add y-label to the first subplot
         if i == 0:
             ax.set_ylabel('Dice Score (%)')
-        ax.set_xlabel('Method')
 
-    # Add a legend
-    axes[0].legend(loc='upper left')
+    # Add a legend outside the last subplot
+    handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
+    labels = methods[:len(colors)]
+    fig.legend(handles, labels, loc='upper center', ncol=4, bbox_to_anchor=(0.5, 1.1))
 
     # Adjust layout
     plt.tight_layout()
+    plt.subplots_adjust(top=0.85)  # Make space for the legend
 
 # dice()
 # tre()
