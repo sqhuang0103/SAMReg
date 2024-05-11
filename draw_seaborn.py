@@ -309,7 +309,7 @@ def sota():
 
         if i == 0:
             # ax.set_ylabel('Dice Score (%)')
-            ax.set_ylabel('Target Registration Error (TRE)')
+            ax.set_ylabel('TRE')
 
     # Global legend for all methods, placed outside the plot
     handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
