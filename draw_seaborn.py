@@ -191,21 +191,97 @@ def tre():
 def sota():
     datasets = ['MR-Prostate', 'MR-Abdomen', 'CT-Lung', '2D-Pathology', '2D-Aerial']
     methods = ['NiftyReg', 'VoxelMorph*', 'LabelReg*', 'PromptReg\n(Ours)']
+    # scores = {
+    #     'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
+    #     'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
+    #     'CT-Lung': [10.93, 77.98, 83.56, 90.14],
+    #     # '2D-Pathology': [6.81, 59.34, None, 72.47],
+    #     # '2D-Aerial': [10.21, 72.73, None, 86.29]
+    #     '2D-Pathology': [6.81, 59.34, 0, 72.47],
+    #     '2D-Aerial': [10.21, 72.73, 0, 86.29]
+    # }
+    # errors = {
+    #     'MR-Prostate': [3.98, 3.34, 3.23, 2.43],
+    #     'MR-Abdomen': [2.21, 3.95, 2.42, 2.67],
+    #     'CT-Lung': [2.02, 2.72, 2.43, 2.72],
+    #     '2D-Pathology': [3.02, 3.72, 0, 3.72],
+    #     '2D-Aerial': [3.02, 2.41, 0, 2.01]
+    # }
     scores = {
-        'MR-Prostate': [7.68, 55.94, 76.72, 76.67],
-        'MR-Abdomen': [8.93, 58.10, 75.97, 76.98],
-        'CT-Lung': [10.93, 77.98, 83.56, 90.14],
+        'MR-Prostate': [
+            4.67,
+            3.68,
+            2.72,
+            2.12,
+
+        ],
+        'MR-Abdomen': [
+            3.13,
+            2.76,
+            1.56,
+            1.25,
+
+        ],
+        'CT-Lung': [
+            4.23,
+            3.239,
+            1.52,
+            1.23,
+
+        ],
         # '2D-Pathology': [6.81, 59.34, None, 72.47],
         # '2D-Aerial': [10.21, 72.73, None, 86.29]
-        '2D-Pathology': [6.81, 59.34, 0, 72.47],
-        '2D-Aerial': [10.21, 72.73, 0, 86.29]
+        '2D-Pathology': [
+            5.9,
+            4.31,
+            0,
+            2.84,
+
+        ],
+        '2D-Aerial': [
+            4.02,
+            3.53,
+            0,
+            2.65,
+
+        ]
     }
     errors = {
-        'MR-Prostate': [3.98, 3.34, 3.23, 2.43],
-        'MR-Abdomen': [2.21, 3.95, 2.42, 2.67],
-        'CT-Lung': [2.02, 2.72, 2.43, 2.72],
-        '2D-Pathology': [3.02, 3.72, 0, 3.72],
-        '2D-Aerial': [3.02, 2.41, 0, 2.01]
+        'MR-Prostate': [
+            3.48,
+            1.98,
+            1.23,
+            1.21,
+
+        ],
+        'MR-Abdomen': [
+            2.89,
+            2.41,
+            1.34,
+            1.03,
+
+        ],
+        'CT-Lung': [
+            1.64,
+            0.81,
+            0.86,
+            0.98,
+
+        ],
+        '2D-Pathology': [
+            3.75,
+            2.13,
+            0,
+            1.01,
+
+        ],
+        '2D-Aerial': [
+            2.25,
+            1.3,
+            0,
+            1.01,
+
+        ]
     }
 
     colors = ['skyblue', 'lightskyblue', 'steelblue', 'orchid']
