@@ -303,8 +303,7 @@ def sota():
         x = np.arange(len(valid_scores))
         ax.bar(x, valid_scores, color=valid_colors, width=0.8, yerr=valid_errors, capsize=5)
         ax.set_xticks([])
-        # ax.set_xticklabels(valid_methods, rotation=45, ha='right')
-        ax.set_title(dataset)
+        # ax.set_title(dataset)
         ax.set_xlabel('Methods')
 
         if i == 0:
