@@ -309,8 +309,8 @@ def sota():
         # ax.set_xlabel('Methods') #TRE用这个
 
         if i == 0:
-            # ax.set_ylabel('Dice Score (%)')
-            ax.set_ylabel('TRE')
+            ax.set_ylabel('Dice Score (%)') # Dice用这个
+            # ax.set_ylabel('TRE') #TRE用这个
 
     # Global legend for all methods, placed outside the plot
     handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in colors]
