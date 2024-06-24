@@ -1,10 +1,12 @@
 import os
-import numpy as np
-import cv2
 import nibabel as nib
 from scipy.spatial.distance import cdist
 import matplotlib.colors as mcolors
+import requests
 import matplotlib.pyplot as plt
+import random
+import numpy as np
+import cv2
 class Metric():
     def __init__(self):
         self.reset()
@@ -273,3 +275,183 @@ def write_nii_data(save_path,file_name,data):
     save_path = os.path.join(save_path,file_name)
     nib.save(nifti_image, save_path)
     # print(f"Saved the NIfTI image to {save_path}")
+
+#======================================================================================
+
+def visualize_masks(image1, masks1, image2, masks2):
+    # Convert PIL images to numpy arrays
+    background1 = np.array(image1)
+    background2 = np.array(image2)
+
+    # Convert RGB to BGR (OpenCV uses BGR color format)
+    background1 = cv2.cvtColor(background1, cv2.COLOR_RGB2BGR)
+    background2 = cv2.cvtColor(background2, cv2.COLOR_RGB2BGR)
+
+    # Create a blank mask for each image
+    mask1 = np.zeros_like(background1)
+    mask2 = np.zeros_like(background2)
+
+    distinct_colors = [
+        (255, 0, 0),  # Red
+        (0, 255, 0),  # Green
+        (0, 0, 255),  # Blue
+        (255, 255, 0),  # Cyan
+        (255, 0, 255),  # Magenta
+        (0, 255, 255),  # Yellow
+        (128, 0, 0),  # Maroon
+        (0, 128, 0),  # Olive
+        (0, 0, 128),  # Navy
+        (128, 128, 0),  # Teal
+        (128, 0, 128),  # Purple
+        (0, 128, 128),  # Gray
+        (192, 192, 192),  # Silver
+        (0, 128, 128), (216, 145, 38), (211, 38, 202), (42, 216, 51), (109, 38, 216), (38, 118, 216), (216, 38, 91),
+        (216, 51, 42), (38, 189, 216), (192, 192, 192), (163, 216, 38), (48, 48, 216), (0, 0, 128), (38, 216, 109),
+        (128, 0, 0), (255, 255, 0), (100, 216, 38), (128, 128, 0), (0, 128, 0), (0, 255, 255), (128, 0, 128),
+        (255, 0, 255), (0, 255, 0), (211, 202, 38), (255, 0, 0), (216, 38, 145), (0, 0, 255), (38, 216, 171),
+        (216, 100, 38), (163, 38, 216)
+
+
+    ]
+
+    def random_color():
+        """Generate a random color with high saturation and value in HSV color space."""
+        hue = random.randint(0, 179)  # Random hue value between 0 and 179 (HSV uses 0-179 range)
+        saturation = random.randint(200, 255)  # High saturation value between 200 and 255
+        value = random.randint(200, 255)  # High value (brightness) between 200 and 255
+        color = np.array([[[hue, saturation, value]]], dtype=np.uint8)
+        return cv2.cvtColor(color, cv2.COLOR_HSV2BGR)[0][0]
+
+
+    # Iterate through mask lists and overlay on the blank masks with different colors
+    for idx, (mask1_item, mask2_item) in enumerate(zip(masks1, masks2)):
+        # color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        color = distinct_colors[idx % len(distinct_colors)]
+        # color = random_color()
+        # Convert binary masks to uint8
+        mask1_item = np.uint8(mask1_item)
+        mask2_item = np.uint8(mask2_item)
+
+        # Create a mask where binary mask is True
+        fg_mask1 = np.where(mask1_item, 255, 0).astype(np.uint8)
+        fg_mask2 = np.where(mask2_item, 255, 0).astype(np.uint8)
+
+        # Apply the foreground masks on the corresponding masks with the same color
+        mask1[fg_mask1 > 0] = color
+        mask2[fg_mask2 > 0] = color
+
+    # Add the masks on top of the background images
+    result1 = cv2.addWeighted(background1, 1, mask1, 0.5, 0)
+    result2 = cv2.addWeighted(background2, 1, mask2, 0.5, 0)
+
+    cv2.imshow('fix_result',result1)
+    cv2.imshow('mov_result',result2)
+
+    return result1, result2
+
+def visualize_masks_with_scores(image, masks, scores, points):
+    """
+    Visualize masks with their scores on the original image.
+
+    Parameters:
+    - image: PIL image with size (H, W)
+    - masks: torch tensor of shape [1, 3, H, W]
+    - scores: torch tensor of scores with shape [1, 3]
+    """
+    # Convert PIL image to NumPy array
+    image_np = np.array(image)
+
+    # Move masks and scores to CPU and convert to NumPy
+    masks_np = masks.cpu().numpy().squeeze(0)  # Shape [3, H, W]
+    scores_np = scores.cpu().numpy().squeeze(0)  # Shape [3]
+
+    # Set up the plot
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    for i in range(3):
+        ax = axs[i]
+        score = scores_np[i]
+        mask = masks_np[i]
+        # Create an RGBA image for the mask
+        mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
+        mask_image[mask] = [255, 0, 0, 255]
+        # mask_image[..., 3] = mask * 255  # Alpha channel
+        # Overlay the mask on the image
+        ax.imshow(image_np)
+        # ax.imshow(mask_image, cmap='Reds', alpha=0.5)
+        ax.imshow(mask_image, alpha=0.5)
+        ax.scatter(points[:, 0], points[:, 1], c='red', marker='o', label='Scatter Points')
+        ax.set_title(f'Score: {score:.4f}')
+        ax.axis('off')
+    plt.tight_layout()
+    # plt.show()
+
+def visualize_masks_with_sim(image, masks):
+    """
+    Visualize masks with their scores on the original image.
+
+    Parameters:
+    - image: PIL image with size (H, W)
+    - masks: torch tensor of shape [1, 3, H, W]
+    - scores: torch tensor of scores with shape [1, 3]
+    """
+    # Convert PIL image to NumPy array
+    image_np = np.array(image)
+
+    # Move masks and scores to CPU and convert to NumPy
+
+    masks = [m.cpu().numpy() for m in masks]  # Shape [3, H, W]
+    masks = [m.astype('uint8') for m in masks]
+    masks_np = np.array(masks)
+
+    # Set up the plot
+    fig, axs = plt.subplots(1, masks_np.shape[0], figsize=(15, 5))
+    for i in range(masks_np.shape[0]):
+        ax = axs[i]
+        mask = masks_np[i]
+        # Create an RGBA image for the mask
+        mask_image = np.zeros((mask.shape[0], mask.shape[1], 4), dtype=np.uint8)
+        mask_image[mask>0] = [255, 0, 0, 255]
+
+        # mask_image[..., 3] = mask * 255  # Alpha channel
+        # Overlay the mask on the image
+        ax.imshow(image_np)
+        ax.imshow(mask_image, cmap='Reds', alpha=0.5)
+
+        ax.axis('off')
+    plt.tight_layout()
+    # plt.show()
+
+def create_transparent_mask(binary_mask, save_path, foreground_color=(12, 34, 234), alpha=0.5):
+    """
+    Convert a binary mask to a colorful transparent mask using OpenCV.
+
+    Args:
+    binary_mask (numpy.array): A binary mask of shape (1, h, w)
+    foreground_color (tuple): RGB color for the mask foreground
+    alpha (float): Alpha transparency value
+
+    Returns:
+    numpy.array: An RGBA image as a numpy array
+    """
+    # Check input dimensions
+    if binary_mask.shape[0] != 1:
+        raise ValueError("Expected binary mask with shape (1, h, w)")
+    binary_mask = np.uint8(binary_mask>0)
+
+    # Remove the first dimension and create an RGB image based on the binary mask
+    mask_rgb = np.zeros((*binary_mask.shape[1:], 3), dtype=np.uint8)
+    mask_rgb[binary_mask[0] == 1] = foreground_color
+
+    # Create an alpha channel based on the binary mask
+    mask_alpha = (binary_mask[0] * alpha * 255).astype(np.uint8)
+
+    # Combine the RGB and alpha channels to create an RGBA image
+    mask_rgba = cv2.merge((mask_rgb[:, :, 0], mask_rgb[:, :, 1], mask_rgb[:, :, 2], mask_alpha))
+    cv2.imwrite(save_path,mask_rgba)
+
+    return mask_rgba
+
+
+
+
+
