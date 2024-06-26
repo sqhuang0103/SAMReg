@@ -102,6 +102,7 @@ def get_sam_url(type):
         'sam_h': "facebook/sam-vit-huge",
         'medsam': "wanglab/medsam-vit-base",
         'slimsam': "nielsr/slimsam-50-uniform",
+        'sam_hq': "lkeab/hq-sam/blob/main/sam_hq_vit_b.pth",
     }
     return sam_url[type]
 
