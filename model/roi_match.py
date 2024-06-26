@@ -37,7 +37,7 @@ class RoiMatching():
 
             case 'medsam':
                 # outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,) #medsam
-                outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.9,) #medsam
+                outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.8,) #medsam
 
             case _:
                 outputs = generator(imgs, points_per_batch=64, stability_score_thresh=0.9, )
