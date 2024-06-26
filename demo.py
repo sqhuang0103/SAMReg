@@ -78,7 +78,7 @@ def _config():
     # demo.py args
     parser.add_argument("--prompt", action="store_true")
     parser.add_argument("--prompt_point", default=[80,113],type=list)
-    parser.add_argument("--sam_type", default="sam_h", choices=["sam_b","sam_h", "medsam", "slimsam"], type=str)
+    parser.add_argument("--sam_type", default="sam_h", choices=["sam_b","sam_h", "medsam", "slimsam", "sam_hq"], type=str)
     parser.add_argument("--jacobian_inverse", action="store_true")
     parser.add_argument("--fix_image", default='./example/intra_subject/cardiac_mr/image1_R.png', type=str)
     parser.add_argument("--mov_image", default='./example/intra_subject/cardiac_mr/image1_T.png', type=str)
