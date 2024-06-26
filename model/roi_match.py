@@ -32,8 +32,8 @@ class RoiMatching():
         generator = pipeline("mask-generation", model=self.url, device=self.device)
         match self.sam_type:
             case 'sam_h':
-                # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
-                outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.70,stability_score_thresh=0.7,)
+                outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.90,stability_score_thresh=0.9,)
+                # outputs = generator(imgs, points_per_batch=64,pred_iou_thresh=0.70,stability_score_thresh=0.7,)
 
             case 'medsam':
                 # outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,) #medsam
