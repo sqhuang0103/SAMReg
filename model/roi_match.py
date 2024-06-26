@@ -37,10 +37,10 @@ class RoiMatching():
 
             case 'medsam':
                 # outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,) #medsam
-                outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.7,) #medsam
+                outputs = generator(imgs, points_per_batch=64,stability_score_thresh=0.8,) #medsam
 
             case _:
-                outputs = generator(imgs, points_per_batch=64, stability_score_thresh=0.7, )
+                outputs = generator(imgs, points_per_batch=64, stability_score_thresh=0.8, )
         return outputs
     def _mask_criteria(self, masks, v_min=200, v_max= 7000):
         remove_list = set()
