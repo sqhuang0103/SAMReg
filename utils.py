@@ -292,9 +292,9 @@ def visualize_masks(image1, masks1, image2, masks2):
     mask2 = np.zeros_like(background2)
 
     distinct_colors = [
-        (255, 0, 0),  # Red
         (0, 255, 0),  # Green
         (0, 0, 255),  # Blue
+        (255, 0, 0),  # Red
         (255, 255, 0),  # Cyan
         (255, 0, 255),  # Magenta
         (0, 255, 255),  # Yellow
