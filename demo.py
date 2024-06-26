@@ -98,6 +98,7 @@ def get_sam_url(type):
     type = str(type)
     sam_url = {
         'sam_b': "facebook/sam-vit-base",
+        'sam_l': "facebook/sam-vit-large",
         'sam_h': "facebook/sam-vit-huge",
         'medsam': "wanglab/medsam-vit-base",
         'slimsam': "nielsr/slimsam-50-uniform",
