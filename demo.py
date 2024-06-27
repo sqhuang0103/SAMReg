@@ -122,8 +122,10 @@ def get_pair_masks(image1, image2, args, num_pair=0, mode='embedding'):
         if len(masks1) < num_pair:
             num_pair = 0 #default
         if num_pair == 0:
-            masks_1 = masks1[:len(masks1) // 2 + 1]
-            masks_2 = masks2[:len(masks2) // 2 + 1]
+            # masks_1 = masks1[:len(masks1) // 2 + 1]
+            masks_1 = masks1[:len(masks1)]
+            # masks_2 = masks2[:len(masks2) // 2 + 1]
+            masks_2 = masks2[:len(masks2)]
         else:
             masks_1 = masks1[:num_pair]
             masks_2 = masks2[:num_pair]

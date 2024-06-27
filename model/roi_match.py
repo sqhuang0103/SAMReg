@@ -116,7 +116,7 @@ class RoiMatching():
 
     def _roi_match(self, matrix, masks1, masks2, sim_criteria=0.8):
         sim_criteria = self.sim_criteria
-        print(matrix.min(), matrix.max(),sim_criteria)
+        # print(matrix.min(), matrix.max(),sim_criteria)
         index_pairs = []
         while torch.any(matrix > sim_criteria):
             max_idx = torch.argmax(matrix)
